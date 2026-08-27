@@ -48,9 +48,8 @@ def test_body_keeps_existing_verbatim_and_appends_one_record():
 
 def test_events_shape():
     events = set_pricing.new_record(PRICING, NOW)["pricingPerEvent"]["actorChargeEvents"]
-    assert list(events) == ["apify-actor-start", "game", "row"]
-    assert events["apify-actor-start"]["eventPriceUsd"] == 0
-    assert events["apify-actor-start"]["eventTitle"] == "Actor start"
+    assert list(events) == ["game", "row"]
+    assert "apify-actor-start" not in events
     assert events["game"] == {
         "eventTitle": "Game",
         "eventDescription": "One game.",

@@ -17,7 +17,8 @@ Reads `actors/<name>/.actor/pricing.json`:
 
 Rules learned from the API (§5): `createdAt` + `startedAt` are required; the body must be the
 existing `pricingInfos` verbatim plus at most one new record; flat prices only;
-`apify-actor-start` is priced $0 and its text is overwritten by the platform anyway; omitting
+`apify-actor-start` must be OMITTED (the API rejects a $0 price as "must contain price",
+verified 2026-08-28) — omitted = no start fee at all; omitting
 `apify-default-dataset-item` from the record is what deletes it; `isPPEPlatformUsagePaidByUser`
 omitted = developer pays. `--publish` sends a separate `PUT {"isPublic": true}` afterwards —
 irreversible via the API once someone has paid, so it is never implied.
@@ -40,22 +41,12 @@ ROOT = Path(__file__).resolve().parent.parent
 API = "https://api.apify.com/v2/acts"
 USERNAME = "acotr_moonie"
 APIFY_MARGIN = 0.2
-ACTOR_START_EVENT = {
-    "eventTitle": "Actor start",
-    "eventDescription": (
-        "Charged when the Actor starts running. Number of events charged depends on "
-        "Actor memory (one event per GB, minimum one event)"
-    ),
-    "eventPriceUsd": 0,
-}
-
-
 def load_pricing(name: str) -> dict[str, Any]:
     return json.loads((ROOT / "actors" / name / ".actor" / "pricing.json").read_text("utf-8"))
 
 
 def new_record(pricing: dict[str, Any], now: datetime) -> dict[str, Any]:
-    events: dict[str, Any] = {"apify-actor-start": dict(ACTOR_START_EVENT)}
+    events: dict[str, Any] = {}
     for key, ev in pricing["events"].items():
         if key in ("apify-actor-start", "apify-default-dataset-item"):
             continue
