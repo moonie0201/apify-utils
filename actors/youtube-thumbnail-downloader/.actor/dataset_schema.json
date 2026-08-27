@@ -1,0 +1,401 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "type": "string",
+        "title": "Record type",
+        "description": "video = a video that exists (charged). error = a free row: not_found, invalid_input, playlist_not_supported, duplicate, removed or budget_exhausted.",
+        "example": "video",
+        "enum": [
+          "video",
+          "error"
+        ]
+      },
+      "videoId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Video ID",
+        "description": "The 11-character YouTube video id, validated against ^[A-Za-z0-9_-]{11}$. Null when the input could not be parsed.",
+        "example": "dQw4w9WgXcQ"
+      },
+      "inputUrl": {
+        "type": "string",
+        "title": "Input",
+        "description": "The line exactly as you gave it.",
+        "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      },
+      "canonicalUrl": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Canonical URL",
+        "description": "https://www.youtube.com/watch?v={videoId}",
+        "example": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+      },
+      "status": {
+        "type": "string",
+        "title": "Status",
+        "description": "ok = charged row. Free: not_found (every size 404, or the request failed), invalid_input (not a YouTube video URL or id), playlist_not_supported (playlist or channel URL), duplicate (same video earlier in the input), removed (blocklisted at a rightholder's request), budget_exhausted (maxVideos or the max total charge was reached first).",
+        "example": "ok",
+        "enum": [
+          "ok",
+          "not_found",
+          "invalid_input",
+          "playlist_not_supported",
+          "duplicate",
+          "removed",
+          "budget_exhausted"
+        ]
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Title",
+        "description": "Video title from YouTube's public oEmbed endpoint; null when includeMetadata is off or oEmbed did not answer.",
+        "example": "Never Gonna Give You Up"
+      },
+      "authorName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Channel name",
+        "description": "The channel's public display name from oEmbed. This is frequently a natural person's name — treat it as such downstream.",
+        "example": "Rick Astley"
+      },
+      "authorUrl": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Channel URL",
+        "description": "The channel URL from oEmbed.",
+        "example": "https://www.youtube.com/@RickAstleyYT"
+      },
+      "metadataSource": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Metadata source",
+        "description": "oembed when title/channel came from the oEmbed endpoint; null otherwise.",
+        "example": "oembed",
+        "enum": [
+          "oembed",
+          null
+        ]
+      },
+      "isVertical": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Vertical",
+        "description": "True when frame0.jpg is taller than wide (a vertical Short); null when frame0 was not served.",
+        "example": false
+      },
+      "aspectHint": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Aspect hint",
+        "description": "16:9, 4:3 or 9:16 from the frame0.jpg dimensions (oEmbed 200x150 also implies 4:3); null when unknown.",
+        "example": "16:9",
+        "enum": [
+          "16:9",
+          "4:3",
+          "9:16",
+          null
+        ]
+      },
+      "best": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "title": "Best size",
+        "description": "The largest standard size that answered 200 on HEAD: {size, url, webpUrl, width, height, bytes, etag}. Null on error rows.",
+        "example": {
+          "size": "maxresdefault",
+          "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+          "webpUrl": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp",
+          "width": 1280,
+          "height": 720,
+          "bytes": 65324,
+          "etag": "\"1749462010\""
+        },
+        "properties": {
+          "size": {
+            "type": "string",
+            "title": "Size",
+            "description": "maxresdefault, sddefault, hqdefault, mqdefault or default.",
+            "example": "maxresdefault"
+          },
+          "url": {
+            "type": "string",
+            "title": "JPEG URL",
+            "description": "https://i.ytimg.com/vi/{videoId}/{size}.jpg",
+            "example": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
+          },
+          "webpUrl": {
+            "type": "string",
+            "title": "WebP URL",
+            "description": "https://i.ytimg.com/vi_webp/{videoId}/{size}.webp — derived; the WebP variant shares the JPEG's availability and etag, so it is not probed separately.",
+            "example": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+          },
+          "width": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "title": "Width",
+            "description": "Pixel width. Constant per size (maxresdefault 1280, sddefault 640, hqdefault 480, mqdefault 320, default 120). oar frames are rendered at the upload's source resolution — up to 1920 (1080 for vertical videos), 1280 or smaller for older or low-resolution uploads — and are measured from the downloaded file when oar is selected, else null.",
+            "example": 1280
+          },
+          "height": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "title": "Height",
+            "description": "Pixel height. maxresdefault is 720, not 1080. oar frames are rendered at the upload's source resolution — up to 1080 (1920 for vertical videos), 720 or smaller for older or low-resolution uploads — and are measured from the downloaded file when oar is selected, else null.",
+            "example": 720
+          },
+          "bytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "title": "Bytes",
+            "description": "content-length from the HEAD probe; null when unavailable.",
+            "example": 65324
+          },
+          "etag": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "ETag",
+            "description": "The CDN etag from the HEAD probe. Changes when the creator replaces the thumbnail — a cheap change-detection key.",
+            "example": "\"1749462010\""
+          }
+        }
+      },
+      "thumbnails": {
+        "type": "object",
+        "title": "Thumbnails",
+        "description": "One entry per probed size — maxresdefault, sddefault, hqdefault, mqdefault, default, oar1 (plus oar2/oar3 when sizes includes oar) — each {available, url, webpUrl, width, height, bytes, etag}. Every size is reported regardless of what you downloaded.",
+        "example": {
+          "maxresdefault": {
+            "available": true,
+            "url": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+            "webpUrl": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp",
+            "width": 1280,
+            "height": 720,
+            "bytes": 65324,
+            "etag": "\"1749462010\""
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "available": {
+              "type": "boolean",
+              "title": "Available",
+              "description": "True when the CDN answered the HEAD probe with 200. A 404 is a real status, so this is never guessed.",
+              "example": true
+            },
+            "url": {
+              "type": "string",
+              "title": "JPEG URL",
+              "description": "https://i.ytimg.com/vi/{videoId}/{size}.jpg",
+              "example": "https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg"
+            },
+            "webpUrl": {
+              "type": "string",
+              "title": "WebP URL",
+              "description": "https://i.ytimg.com/vi_webp/{videoId}/{size}.webp — derived; the WebP variant shares the JPEG's availability and etag, so it is not probed separately.",
+              "example": "https://i.ytimg.com/vi_webp/dQw4w9WgXcQ/maxresdefault.webp"
+            },
+            "width": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "title": "Width",
+              "description": "Pixel width. Constant per size (maxresdefault 1280, sddefault 640, hqdefault 480, mqdefault 320, default 120). oar frames are rendered at the upload's source resolution — up to 1920 (1080 for vertical videos), 1280 or smaller for older or low-resolution uploads — and are measured from the downloaded file when oar is selected, else null.",
+              "example": 1280
+            },
+            "height": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "title": "Height",
+              "description": "Pixel height. maxresdefault is 720, not 1080. oar frames are rendered at the upload's source resolution — up to 1080 (1920 for vertical videos), 720 or smaller for older or low-resolution uploads — and are measured from the downloaded file when oar is selected, else null.",
+              "example": 720
+            },
+            "bytes": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "title": "Bytes",
+              "description": "content-length from the HEAD probe; null when unavailable.",
+              "example": 65324
+            },
+            "etag": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "title": "ETag",
+              "description": "The CDN etag from the HEAD probe. Changes when the creator replaces the thumbnail — a cheap change-detection key.",
+              "example": "\"1749462010\""
+            }
+          }
+        }
+      },
+      "availableSizes": {
+        "type": "array",
+        "title": "Available sizes",
+        "description": "Names that exist for this video, standard sizes largest to smallest, then any oar frames.",
+        "example": [
+          "maxresdefault",
+          "sddefault",
+          "hqdefault",
+          "mqdefault",
+          "default",
+          "oar1"
+        ],
+        "items": {
+          "type": "string"
+        }
+      },
+      "files": {
+        "type": "array",
+        "title": "Saved files",
+        "description": "One entry per record written to this run's key-value store: {size, format, key, storeId, url}. The store is private to your account, so url needs ?token=<your API token> outside the Console; storeId and key are for SDK/API callers. Empty when saveImages is off.",
+        "example": [
+          {
+            "size": "maxresdefault",
+            "format": "jpg",
+            "key": "dQw4w9WgXcQ_maxresdefault.jpg",
+            "storeId": "AbCdEfGhIjKlMnOpQ",
+            "url": "https://api.apify.com/v2/key-value-stores/AbCdEfGhIjKlMnOpQ/records/dQw4w9WgXcQ_maxresdefault.jpg"
+          }
+        ],
+        "items": {
+          "type": "object",
+          "properties": {
+            "size": {
+              "type": "string",
+              "title": "Size",
+              "description": "Size name of the saved file.",
+              "example": "maxresdefault"
+            },
+            "format": {
+              "type": "string",
+              "title": "Format",
+              "description": "jpg or webp.",
+              "example": "jpg",
+              "enum": [
+                "jpg",
+                "webp"
+              ]
+            },
+            "key": {
+              "type": "string",
+              "title": "Key",
+              "description": "{videoId}_{size}.{jpg|webp}",
+              "example": "dQw4w9WgXcQ_maxresdefault.jpg"
+            },
+            "storeId": {
+              "type": "string",
+              "title": "Store ID",
+              "description": "The run's default key-value store id.",
+              "example": "AbCdEfGhIjKlMnOpQ"
+            },
+            "url": {
+              "type": "string",
+              "title": "Record URL",
+              "description": "https://api.apify.com/v2/key-value-stores/{storeId}/records/{key}. Private: append ?token=<your API token> to open it outside the Console.",
+              "example": "https://api.apify.com/v2/key-value-stores/AbCdEfGhIjKlMnOpQ/records/dQw4w9WgXcQ_maxresdefault.jpg"
+            }
+          }
+        }
+      },
+      "fetchedAt": {
+        "type": "string",
+        "title": "Fetched at",
+        "description": "ISO 8601 UTC timestamp of the probe.",
+        "example": "2026-08-28T10:00:00Z"
+      },
+      "errorMessage": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Error message",
+        "description": "Why a row is free, or which selected file could not be saved on an ok row (the URLs are still delivered).",
+        "example": "every size 404"
+      }
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Overview",
+      "description": "One row per video with the best size as an image preview.",
+      "transformation": {
+        "fields": [
+          "videoId",
+          "title",
+          "status",
+          "best.size",
+          "best.url",
+          "availableSizes"
+        ],
+        "flatten": [
+          "best"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "videoId": {
+            "label": "Video",
+            "format": "text"
+          },
+          "title": {
+            "label": "Title",
+            "format": "text"
+          },
+          "status": {
+            "label": "Status",
+            "format": "text"
+          },
+          "best.size": {
+            "label": "Best size",
+            "format": "text"
+          },
+          "best.url": {
+            "label": "Best thumbnail",
+            "format": "image"
+          },
+          "availableSizes": {
+            "label": "Available",
+            "format": "array"
+          }
+        }
+      }
+    }
+  }
+}

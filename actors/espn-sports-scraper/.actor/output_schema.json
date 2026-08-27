@@ -1,0 +1,12 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "ESPN sports output",
+  "properties": {
+    "rows": {
+      "type": "string",
+      "title": "Rows",
+      "description": "Every game, standing, team and summary row from this run as a JSON array, plus the free league_summary and error rows.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?clean=true"
+    }
+  }
+}

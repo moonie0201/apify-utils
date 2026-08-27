@@ -1,0 +1,18 @@
+{
+  "actorSpecification": 1,
+  "name": "tennis-scores-scraper",
+  "title": "ATP & WTA Tennis Scores & Draws — ESPN Feed",
+  "description": "Every ATP and WTA match on the unauthenticated JSON feed espn.com uses — tour events and Grand Slams incl. qualifying — with per-set scores, round, seeds and result text, filtered to your dates. One flat row per match; errors free. Unofficial; no proxy, no key, no standby. No ITF or Challenger.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 1024,
+  "usesStandbyMode": false,
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md",
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  }
+}

@@ -1,0 +1,500 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "type": "string",
+        "title": "Record type",
+        "description": "page and chunk rows are charged; document rows are free summaries (in document mode the document row carries the content and is charged by page count).",
+        "example": "page",
+        "enum": [
+          "page",
+          "chunk",
+          "document"
+        ]
+      },
+      "url": {
+        "type": "string",
+        "title": "URL",
+        "description": "The PDF URL exactly as you supplied it.",
+        "example": "https://www.irs.gov/pub/irs-pdf/fw9.pdf"
+      },
+      "documentId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Document ID",
+        "description": "First 16 hex chars of the SHA-256 of the downloaded bytes. Identical files share it; use it to dedupe.",
+        "example": "3f2a9c1d7b8e4f60"
+      },
+      "page": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Page",
+        "description": "1-based page number (page rows).",
+        "example": 1
+      },
+      "pageCount": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Page count",
+        "description": "Total pages in the PDF, before pageRange and caps.",
+        "example": 6
+      },
+      "text": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Text",
+        "description": "Plain text of the page, document or chunk. Line breaks normalised to \\n, Unicode NFC. Empty for image-only pages when ocr is off.",
+        "example": "Request for Taxpayer Identification Number and Certification"
+      },
+      "markdown": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Markdown",
+        "description": "Heuristic markdown: headings from font-size rank, paragraphs from line gaps, ruled tables as GitHub tables. Null when includeMarkdown is off or the row was trimmed (item_too_large).",
+        "example": "# Form W-9\n\nRequest for Taxpayer Identification Number and Certification"
+      },
+      "tables": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Tables",
+        "description": "Page rows: ruled tables as arrays of rows of cell strings. Document rows: [{page, rows}]. Null when extractTables is off or nothing was found.",
+        "example": [
+          [
+            [
+              "Name",
+              "Qty"
+            ],
+            [
+              "Widget",
+              "2"
+            ]
+          ]
+        ]
+      },
+      "tableCount": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Table count",
+        "description": "Number of ruled tables found on the page.",
+        "example": 0
+      },
+      "charCount": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Character count",
+        "description": "Length of text.",
+        "example": 2413
+      },
+      "wordCount": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Word count",
+        "description": "Whitespace-separated words in text.",
+        "example": 410
+      },
+      "width": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Width (pt)",
+        "description": "Page width in PDF points (1/72 inch).",
+        "example": 612
+      },
+      "height": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Height (pt)",
+        "description": "Page height in PDF points.",
+        "example": 792
+      },
+      "rotation": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Rotation",
+        "description": "Page /Rotate value in degrees: 0, 90, 180 or 270.",
+        "example": 0
+      },
+      "hasTextLayer": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Has text layer",
+        "description": "True when the page has at least 20 text characters before OCR.",
+        "example": true
+      },
+      "ocrApplied": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "OCR applied",
+        "description": "True when the text came from Tesseract (charged as ocr-page).",
+        "example": false
+      },
+      "needsOcr": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Needs OCR",
+        "description": "True for an image-only page that was not OCRed (ocr off, or maxOcrPagesPerPdf reached). Delivered empty and free.",
+        "example": false
+      },
+      "chunkIndex": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Chunk index",
+        "description": "0-based index of the chunk within its document (chunk rows).",
+        "example": 0
+      },
+      "chunkCount": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Chunk count",
+        "description": "Number of chunks the document produced.",
+        "example": 12
+      },
+      "pageStart": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "First page",
+        "description": "Page where the chunk starts.",
+        "example": 1
+      },
+      "pageEnd": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Last page",
+        "description": "Page where the chunk ends.",
+        "example": 1
+      },
+      "charStart": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Start offset",
+        "description": "Character offset of the chunk in the concatenated document text.",
+        "example": 0
+      },
+      "charEnd": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "End offset",
+        "description": "Character offset just past the chunk's last character.",
+        "example": 1498
+      },
+      "tokenEstimate": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Token estimate",
+        "description": "charCount / 4, a rough token count.",
+        "example": 374
+      },
+      "headingPath": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Heading path",
+        "description": "Nearest markdown headings above the chunk start, outermost first.",
+        "example": [
+          "Form W-9",
+          "Part I"
+        ]
+      },
+      "finalUrl": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Final URL",
+        "description": "URL after redirects (document rows).",
+        "example": "https://www.irs.gov/pub/irs-pdf/fw9.pdf"
+      },
+      "fileName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "File name",
+        "description": "From Content-Disposition or the URL path.",
+        "example": "fw9.pdf"
+      },
+      "status": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Status",
+        "description": "ok = every selected page delivered; partial = some pages skipped (pages_capped, budget_exhausted, item_too_large); error = nothing delivered.",
+        "example": "ok",
+        "enum": [
+          "ok",
+          "partial",
+          "error",
+          null
+        ]
+      },
+      "errorCode": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Error code",
+        "description": "Why a document is partial or failed: blocked_url, download_failed, too_large, not_pdf, password_required, permissions_restricted, malformed, timeout, pages_capped, budget_exhausted, run_timeout, item_too_large, duplicate. Null when ok.",
+        "example": "pages_capped"
+      },
+      "httpStatus": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "HTTP status",
+        "description": "Status of the final response, or null when no response was received.",
+        "example": 200
+      },
+      "contentType": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Content-Type",
+        "description": "Content-Type header of the final response.",
+        "example": "application/pdf"
+      },
+      "bytes": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Bytes",
+        "description": "Size of the downloaded file.",
+        "example": 144537
+      },
+      "pagesExtracted": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Pages extracted",
+        "description": "Pages delivered for this document (rows, chunks covered or pages array).",
+        "example": 6
+      },
+      "pagesCharged": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Pages charged",
+        "description": "page events charged for this document (page and chunk mode: what was actually charged; document mode: the count requested by the charge that follows the push). 0 on free runs.",
+        "example": 6
+      },
+      "ocrPagesCharged": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "OCR pages charged",
+        "description": "ocr-page events charged for this document.",
+        "example": 0
+      },
+      "imageOnlyPages": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Image-only pages",
+        "description": "Pages with no text layer and at least one image (OCR candidates).",
+        "example": 0
+      },
+      "metadata": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "title": "Metadata",
+        "description": "PDF info dictionary: title, author, subject, keywords, creator, producer, creationDate, modificationDate (ISO 8601 or null), pdfVersion.",
+        "example": {
+          "title": "Form W-9 (Rev. March 2024)",
+          "author": null,
+          "subject": null,
+          "keywords": null,
+          "creator": null,
+          "producer": null,
+          "creationDate": "2024-03-01T12:00:00Z",
+          "modificationDate": null,
+          "pdfVersion": "1.7"
+        }
+      },
+      "encrypted": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Encrypted",
+        "description": "True when the file uses PDF encryption (opened with pdfPassword or an empty user password).",
+        "example": false
+      },
+      "permissionsCopyAllowed": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Copying allowed",
+        "description": "False when the owner disabled text copying; such files are always skipped with permissions_restricted.",
+        "example": true
+      },
+      "pages": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Pages",
+        "description": "Document mode only: [{page, text, charCount, ocrApplied}]. text is dropped when the row exceeds 8 MB (item_too_large).",
+        "example": [
+          {
+            "page": 1,
+            "text": "Form W-9",
+            "charCount": 8,
+            "ocrApplied": false
+          }
+        ]
+      },
+      "durationMs": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Duration (ms)",
+        "description": "Download plus parse time for the document.",
+        "example": 1180
+      },
+      "fetchedAt": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Fetched at",
+        "description": "UTC time the document was fetched (document rows only; charged rows carry no timestamp).",
+        "example": "2026-08-28T09:00:00Z"
+      }
+    }
+  },
+  "views": {
+    "pages": {
+      "title": "Pages",
+      "description": "One line per charged page row.",
+      "transformation": {
+        "fields": [
+          "url",
+          "page",
+          "charCount",
+          "hasTextLayer",
+          "text"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "url": {
+            "label": "URL",
+            "format": "link"
+          },
+          "page": {
+            "label": "Page",
+            "format": "number"
+          },
+          "charCount": {
+            "label": "Chars",
+            "format": "number"
+          },
+          "hasTextLayer": {
+            "label": "Text layer",
+            "format": "boolean"
+          },
+          "text": {
+            "label": "Text",
+            "format": "text"
+          }
+        }
+      }
+    },
+    "documents": {
+      "title": "Documents",
+      "description": "One free summary row per URL with status and error code.",
+      "transformation": {
+        "fields": [
+          "url",
+          "status",
+          "errorCode",
+          "pageCount",
+          "pagesCharged"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "url": {
+            "label": "URL",
+            "format": "link"
+          },
+          "status": {
+            "label": "Status",
+            "format": "text"
+          },
+          "errorCode": {
+            "label": "Error",
+            "format": "text"
+          },
+          "pageCount": {
+            "label": "Pages",
+            "format": "number"
+          },
+          "pagesCharged": {
+            "label": "Charged",
+            "format": "number"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+# Video ids removed at a rightholder's request (TAKEDOWN.md). One 11-character id per line.
+# The image is rebuilt and pushed within 48 h of a request, so future runs skip these ids
+# with a free `removed` row. We hold no files: they live only in the buyer's own store.

@@ -1,0 +1,18 @@
+{
+  "actorSpecification": 1,
+  "name": "pdf-text-extractor",
+  "title": "PDF Text & Table Extractor — Markdown, OCR",
+  "description": "Text, markdown, ruled tables and RAG chunks from PDF URLs, one item per page or per document, with optional Tesseract OCR for scanned pages. Built on PDFium: 140 pages in about a second. Charged per page delivered; document summaries, errors and skipped pages are free.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "minMemoryMbytes": 512,
+  "maxMemoryMbytes": 1024,
+  "usesStandbyMode": false,
+  "dockerfile": "../Dockerfile",
+  "readme": "../README.md",
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "storages": {
+    "dataset": "./dataset_schema.json"
+  }
+}

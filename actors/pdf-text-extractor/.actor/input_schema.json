@@ -1,0 +1,135 @@
+{
+  "title": "PDF Text & Table Extractor",
+  "description": "PDF URLs in; per-page, per-document or RAG-chunk items out with text, markdown, ruled tables and optional OCR. Charged per page delivered.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "urls": {
+      "title": "PDF URLs",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Direct links to PDF files (http or https), one per line. Must be the PDF itself, not a viewer page such as Google Docs or a browser preview. Each URL is fetched once with a plain GET, no proxy, no login; requests to the same host are spaced at least one second apart. You are responsible for the hosting site's terms and robots rules.",
+      "prefill": ["https://www.irs.gov/pub/irs-pdf/fw9.pdf"],
+      "minItems": 1,
+      "maxItems": 100
+    },
+    "outputMode": {
+      "title": "Output mode",
+      "type": "string",
+      "editor": "select",
+      "description": "page = one item per page (CSV and Google Sheets friendly). document = one item per PDF with full text, markdown and a pages array. chunk = RAG chunks of chunkSize characters with page and character offsets. A free document summary row is always written.",
+      "enum": ["page", "document", "chunk"],
+      "enumTitles": ["One item per page", "One item per document", "RAG chunks"],
+      "default": "page"
+    },
+    "includeMarkdown": {
+      "title": "Markdown",
+      "type": "boolean",
+      "editor": "checkbox",
+      "description": "Add a markdown field: headings inferred from font-size rank, paragraphs from line gaps, tables as GitHub tables when extractTables is on. Heuristic, not a layout model.",
+      "default": true
+    },
+    "extractTables": {
+      "title": "Extract ruled tables",
+      "type": "boolean",
+      "editor": "checkbox",
+      "description": "Detect tables drawn with ruling lines and return them as arrays of rows. Borderless tables stay in the text. Adds about 0.3-0.5 s per page. No extra charge.",
+      "default": false
+    },
+    "pageRange": {
+      "title": "Page range",
+      "type": "string",
+      "editor": "textfield",
+      "nullable": true,
+      "description": "Pages to extract, 1-based, e.g. 1-5, 8, 12- (12 to end). Empty = all pages. Pages outside the range are never charged.",
+      "pattern": "^[0-9,\\- ]*$"
+    },
+    "maxPagesPerPdf": {
+      "title": "Max pages per PDF",
+      "type": "integer",
+      "editor": "number",
+      "description": "Pages beyond this are not extracted or charged; the document row gets status partial with errorCode pages_capped. Raise it deliberately for long documents.",
+      "default": 100,
+      "minimum": 1,
+      "maximum": 2000,
+      "unit": "pages"
+    },
+    "maxPages": {
+      "title": "Max pages (total, charged)",
+      "type": "integer",
+      "editor": "number",
+      "description": "Hard stop for the whole run. Your main cost control: at $0.0003 per page, 5000 pages = $1.50. Documents not reached are reported with errorCode budget_exhausted and are free. 0 = no limit.",
+      "default": 5000,
+      "minimum": 0,
+      "maximum": 100000,
+      "unit": "pages"
+    },
+    "maxPdfMb": {
+      "title": "Max file size (MB)",
+      "type": "integer",
+      "editor": "number",
+      "description": "Files larger than this are refused before download (Content-Length) and aborted during download. Free error row too_large. The effective cap is also bounded by the run's memory (memory MB / 4).",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 100,
+      "unit": "MB"
+    },
+    "ocr": {
+      "title": "OCR scanned pages",
+      "type": "boolean",
+      "editor": "checkbox",
+      "description": "Run Tesseract (English) on pages that have no text layer but contain an image. Such pages are charged as OCR page ($0.003) instead of page. Off = those pages are delivered empty with needsOcr true, free.",
+      "sectionCaption": "OCR (scanned PDFs)",
+      "sectionDescription": "Only pages with fewer than 20 text characters and at least one image object are OCRed, at 200 dpi grayscale. Measured accuracy 93-97% on clean scans of printed English.",
+      "default": false
+    },
+    "ocrLanguage": {
+      "title": "OCR language",
+      "type": "string",
+      "editor": "select",
+      "description": "Tesseract language pack. Only packs shipped in the image are listed.",
+      "enum": ["eng"],
+      "enumTitles": ["English"],
+      "default": "eng"
+    },
+    "maxOcrPagesPerPdf": {
+      "title": "Max OCR pages per PDF",
+      "type": "integer",
+      "editor": "number",
+      "description": "OCR cost control. Remaining image-only pages are delivered empty with needsOcr true and are not charged.",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 500,
+      "unit": "pages"
+    },
+    "chunkSize": {
+      "title": "Chunk size (characters)",
+      "type": "integer",
+      "editor": "number",
+      "description": "Used only in chunk mode. 1500 characters is roughly 375 tokens. Split at paragraph, then sentence, then hard cut.",
+      "sectionCaption": "RAG chunks",
+      "default": 1500,
+      "minimum": 200,
+      "maximum": 20000
+    },
+    "chunkOverlap": {
+      "title": "Chunk overlap (characters)",
+      "type": "integer",
+      "editor": "number",
+      "description": "Tail of the previous chunk repeated at the start of the next. Clamped to half of chunkSize.",
+      "default": 200,
+      "minimum": 0,
+      "maximum": 5000
+    },
+    "pdfPassword": {
+      "title": "PDF password (optional)",
+      "type": "string",
+      "editor": "textfield",
+      "isSecret": true,
+      "nullable": true,
+      "description": "Applied to every password-protected PDF in this run. Wrong or missing password = free error row password_required. PDFs whose owner disabled text copying are always skipped (free error row permissions_restricted); there is no override.",
+      "sectionCaption": "Protected files"
+    }
+  },
+  "required": ["urls"]
+}

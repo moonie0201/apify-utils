@@ -1,0 +1,34 @@
+{
+  "title": "ESPN Sports Scores & Standings — 30+ Leagues",
+  "description": "Scores, schedules, standings and teams from the unauthenticated JSON feeds espn.com itself uses — NFL, NBA, MLB, NHL, college, 20 soccer competitions, ATP/WTA tennis, PGA, F1, UFC — in one flat row schema with pregame odds included. Date ranges back to 2001. Unofficial; no proxy, no key, no standby.",
+  "seoTitle": "Sports Scores Scraper (ESPN) – NFL, NBA, Soccer",
+  "seoDescription": "Scores, schedules, standings and teams from the JSON feeds behind espn.com: NFL, NBA, NCAA, soccer, ATP/WTA tennis, F1, UFC. Flat rows, failures free.",
+  "categories": ["SPORTS", "NEWS", "AUTOMATION"],
+  "minimalMaxTotalChargeUsd": 0.10,
+  "events": {
+    "apify-actor-start": {
+      "title": "Actor start",
+      "description": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+      "priceUsd": 0,
+      "isPrimaryEvent": false
+    },
+    "game": {
+      "title": "Game",
+      "description": "One game, tennis match, F1 session or golf leaderboard row that passed your team and status filters, with scores, linescores, venue, broadcasts and the pregame line. Filtered-out games, off-season notices and errors are free.",
+      "priceUsd": 0.002,
+      "isPrimaryEvent": true
+    },
+    "row": {
+      "title": "Row",
+      "description": "One standings entry or one team-directory entry.",
+      "priceUsd": 0.001,
+      "isPrimaryEvent": false
+    },
+    "summary": {
+      "title": "Summary",
+      "description": "One summary-mode row with leaders, scoring plays, team box-score stats and final win probability (one extra request).",
+      "priceUsd": 0.004,
+      "isPrimaryEvent": false
+    }
+  }
+}

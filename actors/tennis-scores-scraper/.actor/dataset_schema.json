@@ -1,0 +1,1295 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "recordType": {
+        "type": "string",
+        "title": "Record type",
+        "description": "game and summary rows are charged as game/summary; standing and team rows as row; league_summary and error rows are free.",
+        "example": "game"
+      },
+      "type": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Row type",
+        "description": "game (team sports), match (tennis, UFC), session (F1 practice/qualifying/race), leaderboard (golf, one per player).",
+        "example": "game"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "ESPN id",
+        "description": "ESPN event id (game), match id (tennis/UFC), session id (F1) or event:player for golf. Use with espnPath in summary mode.",
+        "example": "401772830"
+      },
+      "uid": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "ESPN uid",
+        "description": "ESPN's composite uid for the row.",
+        "example": "s:20~l:28~e:401772830"
+      },
+      "league": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "League key",
+        "description": "The league key you passed (nfl, epl, atp ...) or the raw sport/league path.",
+        "example": "nfl"
+      },
+      "leagueName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "League name",
+        "description": "Display name of the league.",
+        "example": "NFL"
+      },
+      "sport": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Sport",
+        "description": "ESPN sport segment: football, basketball, soccer, tennis, golf, racing, mma ...",
+        "example": "football"
+      },
+      "espnPath": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "ESPN path",
+        "description": "sport/league path used in the feed URL. Pass league/id pairs to summary mode.",
+        "example": "football/nfl"
+      },
+      "season": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Season",
+        "description": "Season year as ESPN labels it.",
+        "example": 2025
+      },
+      "seasonType": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Season type",
+        "description": "1 preseason, 2 regular season, 3 postseason (ESPN's numbering; soccer uses its own ids).",
+        "example": 2
+      },
+      "week": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Week",
+        "description": "Week number for weekly leagues (NFL, college football).",
+        "example": 1
+      },
+      "tournament": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Tournament",
+        "description": "Tournament, Grand Prix or fight-card name for athlete sports.",
+        "example": "Wimbledon"
+      },
+      "tournamentId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Tournament id",
+        "description": "ESPN tournament/event id for athlete sports.",
+        "example": "188"
+      },
+      "round": {
+        "type": [
+          "string",
+          "integer",
+          "null"
+        ],
+        "title": "Round",
+        "description": "Tennis round name, F1 session (FP1, Qual, Race) or UFC bout order.",
+        "example": "Round 4"
+      },
+      "grouping": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Grouping",
+        "description": "Tennis draw (mens-singles, womens-doubles ...) or UFC weight class.",
+        "example": "mens-singles"
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Name",
+        "description": "Game name as ESPN prints it, or 'A vs B' for matches.",
+        "example": "Tampa Bay Buccaneers at Atlanta Falcons"
+      },
+      "shortName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Short name",
+        "description": "Abbreviated name.",
+        "example": "TB @ ATL"
+      },
+      "date": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Start (UTC)",
+        "description": "Scheduled start in ISO 8601 UTC.",
+        "example": "2025-09-07T17:00Z"
+      },
+      "dateLocal": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Local date",
+        "description": "Calendar date of the start in your timezone input (default UTC).",
+        "example": "2025-09-07"
+      },
+      "endDate": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "End (UTC)",
+        "description": "End date for multi-day events (golf, tennis tournaments) when ESPN gives one.",
+        "example": "2025-06-15T04:00Z"
+      },
+      "status": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Status",
+        "description": "scheduled, live, final, postponed, canceled, suspended or delayed.",
+        "example": "final"
+      },
+      "statusDetail": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Status detail",
+        "description": "ESPN's status text (Final, FT, Retired, 'Sat, October 3rd at 7:00 PM EDT').",
+        "example": "Final"
+      },
+      "completed": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Completed",
+        "description": "True when the event is over.",
+        "example": true
+      },
+      "period": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Period",
+        "description": "Current or final period, set, round or lap count.",
+        "example": 4
+      },
+      "clock": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Clock",
+        "description": "Display clock at snapshot time.",
+        "example": "0:00"
+      },
+      "competitorType": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Competitor type",
+        "description": "team or athlete.",
+        "example": "team"
+      },
+      "homeId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home id",
+        "description": "ESPN team id, or athlete id for athlete sports (the winner for F1 sessions, the player for golf rows).",
+        "example": "1"
+      },
+      "homeName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home name",
+        "description": "Team display name or athlete/pair display name.",
+        "example": "Atlanta Falcons"
+      },
+      "homeAbbr": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home abbreviation",
+        "description": "Team abbreviation; null for athletes.",
+        "example": "ATL"
+      },
+      "homeShortName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home short name",
+        "description": "Short team name or 'K. Khachanov' style athlete name.",
+        "example": "Falcons"
+      },
+      "homeLogo": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home logo URL",
+        "description": "Team logo or country-flag image URL as ESPN serves it. URL only, never bytes.",
+        "example": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/atl.png"
+      },
+      "homeScore": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Home score",
+        "description": "Score, or strokes-to-par for golf; null for tennis (see linescores).",
+        "example": 20
+      },
+      "homeWinner": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Home winner",
+        "description": "True when this side won.",
+        "example": false
+      },
+      "homeRecord": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home record",
+        "description": "Home record string.",
+        "example": "8-0"
+      },
+      "homeRank": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Home rank/seed",
+        "description": "Poll rank (college) or tournament seed (tennis); null when unranked.",
+        "example": 17
+      },
+      "homeCountry": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Home country",
+        "description": "Athlete country from the flag; null for teams.",
+        "example": "Russia"
+      },
+      "homeLinescores": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Home linescores",
+        "description": "Per-period, per-set or per-round scores.",
+        "example": [
+          7,
+          3,
+          3,
+          7
+        ]
+      },
+      "awayId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away id",
+        "description": "ESPN team id or athlete id; null on golf and F1 rows.",
+        "example": "27"
+      },
+      "awayName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away name",
+        "description": "Team display name or athlete/pair display name.",
+        "example": "Tampa Bay Buccaneers"
+      },
+      "awayAbbr": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away abbreviation",
+        "description": "Team abbreviation; null for athletes.",
+        "example": "TB"
+      },
+      "awayShortName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away short name",
+        "description": "Short team name or short athlete name.",
+        "example": "Buccaneers"
+      },
+      "awayLogo": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away logo URL",
+        "description": "Team logo or country-flag image URL. URL only.",
+        "example": "https://a.espncdn.com/i/teamlogos/nfl/500/scoreboard/tb.png"
+      },
+      "awayScore": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Away score",
+        "description": "Score; null for tennis (see linescores).",
+        "example": 23
+      },
+      "awayWinner": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Away winner",
+        "description": "True when this side won.",
+        "example": true
+      },
+      "awayRecord": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away record",
+        "description": "Road record string.",
+        "example": "5-4"
+      },
+      "awayRank": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Away rank/seed",
+        "description": "Poll rank or tournament seed; null when unranked.",
+        "example": 3
+      },
+      "awayCountry": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Away country",
+        "description": "Athlete country from the flag; null for teams.",
+        "example": "Russia"
+      },
+      "awayLinescores": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Away linescores",
+        "description": "Per-period, per-set or per-round scores.",
+        "example": [
+          0,
+          10,
+          7,
+          6
+        ]
+      },
+      "winnerId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Winner id",
+        "description": "Id of the winning side; null before the end.",
+        "example": "27"
+      },
+      "resultText": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Result text",
+        "description": "ESPN's one-line result note for tennis and UFC.",
+        "example": "(17) Karen Khachanov (RUS) bt Kamil Majchrzak (POL) 6-4 6-2 6-3"
+      },
+      "position": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Position",
+        "description": "Leaderboard position (golf) or 1 for the F1 session winner.",
+        "example": 1
+      },
+      "scoreDisplay": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Score display",
+        "description": "Golf score to par as displayed ('-1', 'E').",
+        "example": "-1"
+      },
+      "venueName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Venue",
+        "description": "Stadium, arena, circuit or tournament venue.",
+        "example": "Mercedes-Benz Stadium"
+      },
+      "venueCity": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Venue city",
+        "description": "City of the venue.",
+        "example": "Atlanta"
+      },
+      "venueState": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Venue state",
+        "description": "State/region when ESPN gives one.",
+        "example": "GA"
+      },
+      "venueCountry": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Venue country",
+        "description": "Country of the venue.",
+        "example": "USA"
+      },
+      "venueIndoor": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Indoor",
+        "description": "True for indoor venues when known.",
+        "example": true
+      },
+      "court": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Court",
+        "description": "Tennis court name.",
+        "example": "No. 1 Court"
+      },
+      "attendance": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Attendance",
+        "description": "Attendance when published.",
+        "example": 71610
+      },
+      "neutralSite": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Neutral site",
+        "description": "True when neither side is at home.",
+        "example": false
+      },
+      "broadcasts": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Broadcasts",
+        "description": "Broadcaster names ESPN lists for the event.",
+        "example": [
+          "FOX"
+        ]
+      },
+      "oddsProvider": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Odds provider",
+        "description": "The single sportsbook whose pregame line ESPN shows. Informational only, not for wagering.",
+        "example": "Draft Kings"
+      },
+      "oddsDetails": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Odds details",
+        "description": "Pregame line as text ('SEA -3.5'). Null for tennis, UFC and finished games.",
+        "example": "SEA -3.5"
+      },
+      "spread": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Spread",
+        "description": "Pregame point spread for the home side.",
+        "example": -3.5
+      },
+      "overUnder": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Over/under",
+        "description": "Pregame total.",
+        "example": 44.5
+      },
+      "homeMoneyline": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Home moneyline",
+        "description": "Pregame home moneyline (American odds).",
+        "example": -180
+      },
+      "awayMoneyline": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Away moneyline",
+        "description": "Pregame away moneyline (American odds).",
+        "example": 150
+      },
+      "espnUrl": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "ESPN page",
+        "description": "Link to the ESPN gamecast/tournament page.",
+        "example": "https://www.espn.com/nfl/game/_/gameId/401772830/buccaneers-falcons"
+      },
+      "scrapedAt": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Scraped at",
+        "description": "When this row was fetched (ISO 8601 UTC).",
+        "example": "2026-08-28T03:00:12Z"
+      },
+      "sourceHost": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Source host",
+        "description": "ESPN host the row came from.",
+        "example": "site.api.espn.com"
+      },
+      "leaders": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Leaders",
+        "description": "Summary mode: statistical leaders [{category, athleteName, teamAbbr, value}].",
+        "example": [
+          {
+            "category": "Passing Yards",
+            "athleteName": "Patrick Mahomes",
+            "teamAbbr": "KC",
+            "value": "20/28, 291 YDS, 1 TD, 1 INT"
+          }
+        ]
+      },
+      "scoringPlays": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Scoring plays",
+        "description": "Summary mode: [{period, clock, teamAbbr, text, homeScore, awayScore}].",
+        "example": [
+          {
+            "period": 1,
+            "clock": "8:14",
+            "teamAbbr": "BAL",
+            "text": "Derrick Henry 5 Yd Run (Justin Tucker Kick)",
+            "homeScore": 0,
+            "awayScore": 7
+          }
+        ]
+      },
+      "winProbabilityFinal": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Final home win probability",
+        "description": "Summary mode: last win-probability sample for the home side (0-1).",
+        "example": 1.0
+      },
+      "boxscoreTeamStats": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "title": "Team box-score stats",
+        "description": "Summary mode: [{teamAbbr, stat, value}] for both teams.",
+        "example": [
+          {
+            "teamAbbr": "BAL",
+            "stat": "firstDowns",
+            "value": "25"
+          }
+        ]
+      },
+      "group": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Group",
+        "description": "Standings group: conference, division, table or F1 Driver/Constructor Standings.",
+        "example": "AFC East"
+      },
+      "groupId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Group id",
+        "description": "ESPN group id.",
+        "example": "4"
+      },
+      "rank": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Rank",
+        "description": "Position within the group.",
+        "example": 1
+      },
+      "teamId": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Team id",
+        "description": "ESPN team id (or driver id for F1 driver standings).",
+        "example": "2"
+      },
+      "teamName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Team name",
+        "description": "Team display name.",
+        "example": "Buffalo Bills"
+      },
+      "teamAbbr": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Team abbreviation",
+        "description": "Team abbreviation.",
+        "example": "BUF"
+      },
+      "teamLogo": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Team logo URL",
+        "description": "Logo URL as ESPN serves it.",
+        "example": "https://a.espncdn.com/i/teamlogos/nfl/500/buf.png"
+      },
+      "gamesPlayed": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Games played",
+        "description": "Games played.",
+        "example": 17
+      },
+      "wins": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Wins",
+        "description": "Wins.",
+        "example": 13
+      },
+      "losses": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Losses",
+        "description": "Losses.",
+        "example": 4
+      },
+      "ties": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Ties/draws",
+        "description": "Ties or draws.",
+        "example": 0
+      },
+      "otLosses": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "OT losses",
+        "description": "Overtime losses (NHL).",
+        "example": 5
+      },
+      "points": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Points",
+        "description": "Table points (soccer, NHL, F1 championship points).",
+        "example": 84
+      },
+      "winPercent": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Win percent",
+        "description": "Winning percentage.",
+        "example": 0.765
+      },
+      "pointsFor": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Points/goals for",
+        "description": "Points or goals scored.",
+        "example": 525
+      },
+      "pointsAgainst": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Points/goals against",
+        "description": "Points or goals conceded.",
+        "example": 368
+      },
+      "pointDifferential": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Differential",
+        "description": "Points or goal difference.",
+        "example": 157
+      },
+      "gamesBehind": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Games behind",
+        "description": "Games behind the leader.",
+        "example": 0
+      },
+      "streak": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Streak",
+        "description": "Current streak as displayed.",
+        "example": "L1"
+      },
+      "playoffSeed": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Playoff seed",
+        "description": "Playoff seed.",
+        "example": 2
+      },
+      "clincher": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Clincher",
+        "description": "Clinch marker as displayed (x, y, z ...).",
+        "example": "z"
+      },
+      "divisionRecord": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Division record",
+        "description": "Record within the division.",
+        "example": "5-1"
+      },
+      "conferenceRecord": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Conference record",
+        "description": "Record within the conference.",
+        "example": "9-3"
+      },
+      "note": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Note",
+        "description": "Qualification note (Champions League, Relegation ...).",
+        "example": "Champions League"
+      },
+      "rankChange": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "title": "Rank change",
+        "description": "Change in rank since the last update.",
+        "example": 0
+      },
+      "stats": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "title": "All stats",
+        "description": "Every ESPN stat name mapped to its value, so nothing in the standings table is lost.",
+        "example": {
+          "wins": 13,
+          "losses": 4,
+          "overall": "13-4"
+        }
+      },
+      "slug": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Slug",
+        "description": "Team slug.",
+        "example": "atlanta-hawks"
+      },
+      "displayName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Display name",
+        "description": "Full team name.",
+        "example": "Atlanta Hawks"
+      },
+      "shortDisplayName": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Short display name",
+        "description": "Short team name.",
+        "example": "Hawks"
+      },
+      "abbreviation": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Abbreviation",
+        "description": "Team abbreviation.",
+        "example": "ATL"
+      },
+      "location": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Location",
+        "description": "Team city/location.",
+        "example": "Atlanta"
+      },
+      "nickname": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Nickname",
+        "description": "Team nickname.",
+        "example": "Hawks"
+      },
+      "color": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Color",
+        "description": "Primary colour hex.",
+        "example": "c8102e"
+      },
+      "alternateColor": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Alternate color",
+        "description": "Secondary colour hex.",
+        "example": "fdb927"
+      },
+      "logo": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Logo URL",
+        "description": "Logo URL as ESPN serves it. URL only.",
+        "example": "https://a.espncdn.com/i/teamlogos/nba/500/atl.png"
+      },
+      "isActive": {
+        "type": [
+          "boolean",
+          "null"
+        ],
+        "title": "Active",
+        "description": "True for active franchises.",
+        "example": true
+      },
+      "mode": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Mode",
+        "description": "Free rows: the mode that was running.",
+        "example": "scoreboard"
+      },
+      "window": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Window",
+        "description": "Free rows: the date window of the run.",
+        "example": "2025-09-07..2025-09-13"
+      },
+      "requests": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Requests",
+        "description": "Free rows: ESPN requests made for this league.",
+        "example": 1
+      },
+      "itemsFound": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Items found",
+        "description": "Free rows: rows found before your filters.",
+        "example": 15
+      },
+      "message": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Message",
+        "description": "Free rows: what happened ('no fixtures in window — off-season', 'unknown league path', 'ESPN edge returned 403 — run stopped, nothing charged').",
+        "example": "15 rows pushed"
+      }
+    }
+  },
+  "views": {
+    "games": {
+      "title": "Games",
+      "description": "One row per game, match, session or leaderboard entry.",
+      "transformation": {
+        "fields": [
+          "league",
+          "date",
+          "status",
+          "name",
+          "homeName",
+          "homeScore",
+          "awayName",
+          "awayScore",
+          "round",
+          "grouping",
+          "venueName",
+          "oddsDetails",
+          "espnUrl"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "league": {
+            "label": "League key",
+            "format": "text"
+          },
+          "date": {
+            "label": "Start (UTC)",
+            "format": "text"
+          },
+          "status": {
+            "label": "Status",
+            "format": "text"
+          },
+          "name": {
+            "label": "Name",
+            "format": "text"
+          },
+          "homeName": {
+            "label": "Home name",
+            "format": "text"
+          },
+          "homeScore": {
+            "label": "Home score",
+            "format": "text"
+          },
+          "awayName": {
+            "label": "Away name",
+            "format": "text"
+          },
+          "awayScore": {
+            "label": "Away score",
+            "format": "text"
+          },
+          "round": {
+            "label": "Round",
+            "format": "text"
+          },
+          "grouping": {
+            "label": "Grouping",
+            "format": "text"
+          },
+          "venueName": {
+            "label": "Venue",
+            "format": "text"
+          },
+          "oddsDetails": {
+            "label": "Odds details",
+            "format": "text"
+          },
+          "espnUrl": {
+            "label": "ESPN page",
+            "format": "link"
+          }
+        }
+      }
+    },
+    "standings": {
+      "title": "Standings",
+      "description": "One row per standings entry.",
+      "transformation": {
+        "fields": [
+          "league",
+          "season",
+          "group",
+          "rank",
+          "teamName",
+          "gamesPlayed",
+          "wins",
+          "losses",
+          "ties",
+          "points",
+          "pointDifferential",
+          "streak",
+          "note"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "league": {
+            "label": "League key",
+            "format": "text"
+          },
+          "season": {
+            "label": "Season",
+            "format": "text"
+          },
+          "group": {
+            "label": "Group",
+            "format": "text"
+          },
+          "rank": {
+            "label": "Rank",
+            "format": "text"
+          },
+          "teamName": {
+            "label": "Team name",
+            "format": "text"
+          },
+          "gamesPlayed": {
+            "label": "Games played",
+            "format": "text"
+          },
+          "wins": {
+            "label": "Wins",
+            "format": "text"
+          },
+          "losses": {
+            "label": "Losses",
+            "format": "text"
+          },
+          "ties": {
+            "label": "Ties/draws",
+            "format": "text"
+          },
+          "points": {
+            "label": "Points",
+            "format": "text"
+          },
+          "pointDifferential": {
+            "label": "Differential",
+            "format": "text"
+          },
+          "streak": {
+            "label": "Streak",
+            "format": "text"
+          },
+          "note": {
+            "label": "Note",
+            "format": "text"
+          }
+        }
+      }
+    },
+    "teams": {
+      "title": "Teams",
+      "description": "One row per team-directory entry.",
+      "transformation": {
+        "fields": [
+          "league",
+          "season",
+          "teamId",
+          "displayName",
+          "abbreviation",
+          "location",
+          "venueName",
+          "venueCity",
+          "logo"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "league": {
+            "label": "League key",
+            "format": "text"
+          },
+          "season": {
+            "label": "Season",
+            "format": "text"
+          },
+          "teamId": {
+            "label": "Team id",
+            "format": "text"
+          },
+          "displayName": {
+            "label": "Display name",
+            "format": "text"
+          },
+          "abbreviation": {
+            "label": "Abbreviation",
+            "format": "text"
+          },
+          "location": {
+            "label": "Location",
+            "format": "text"
+          },
+          "venueName": {
+            "label": "Venue",
+            "format": "text"
+          },
+          "venueCity": {
+            "label": "Venue city",
+            "format": "text"
+          },
+          "logo": {
+            "label": "Logo URL",
+            "format": "link"
+          }
+        }
+      }
+    }
+  }
+}

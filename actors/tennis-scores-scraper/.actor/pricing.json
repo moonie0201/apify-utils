@@ -1,0 +1,37 @@
+{
+  "title": "ATP & WTA Tennis Scores & Draws — ESPN Feed",
+  "description": "Every ATP and WTA match on the unauthenticated JSON feed espn.com uses — tour events and Grand Slams incl. qualifying — with per-set scores, round, seeds and result text, filtered to your dates. One flat row per match; errors free. Unofficial; no proxy, no key, no standby. No ITF or Challenger.",
+  "seoTitle": "Tennis Scores & Draws Scraper – ATP, WTA (ESPN)",
+  "seoDescription": "ATP and WTA match scores, draws, rounds, seeds and set scores by date from the JSON feeds behind espn.com. Flat rows, failures free. No ITF/Challenger.",
+  "categories": [
+    "SPORTS",
+    "AUTOMATION"
+  ],
+  "minimalMaxTotalChargeUsd": 0.1,
+  "events": {
+    "apify-actor-start": {
+      "title": "Actor start",
+      "description": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+      "priceUsd": 0,
+      "isPrimaryEvent": false
+    },
+    "game": {
+      "title": "Game",
+      "description": "One game, tennis match, F1 session or golf leaderboard row that passed your team and status filters, with scores, linescores, venue, broadcasts and the pregame line. Filtered-out games, off-season notices and errors are free.",
+      "priceUsd": 0.002,
+      "isPrimaryEvent": true
+    },
+    "row": {
+      "title": "Row",
+      "description": "One standings entry or one team-directory entry.",
+      "priceUsd": 0.001,
+      "isPrimaryEvent": false
+    },
+    "summary": {
+      "title": "Summary",
+      "description": "One summary-mode row with leaders, scoring plays, team box-score stats and final win probability (one extra request).",
+      "priceUsd": 0.004,
+      "isPrimaryEvent": false
+    }
+  }
+}

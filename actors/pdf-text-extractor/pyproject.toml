@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-m 'not live'"
+markers = [
+    "live: fetches real public PDFs over the network; opt in with -m live",
+]

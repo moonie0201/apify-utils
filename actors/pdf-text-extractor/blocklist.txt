@@ -1,0 +1,4 @@
+# Hostnames removed at a rightholder's request (TAKEDOWN.md). One hostname per line;
+# subdomains of a listed host are refused too. The image is rebuilt and pushed within 48 h
+# of a request, so future runs refuse these hosts with a free `blocked_url` row before any
+# request is sent. We hold no documents: they exist only inside the buyer's run.

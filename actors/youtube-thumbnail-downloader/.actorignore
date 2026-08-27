@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+storage/
+apify_storage/
+.venv/
+tests/
+.env

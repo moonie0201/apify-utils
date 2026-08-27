@@ -1,0 +1,4 @@
+# TAKEDOWN.md / PRIVACY.md mechanism for espn-sports-scraper and tennis-scores-scraper.
+# One identifier per line: a league key or ESPN path (nba, soccer/bra.1), or an ESPN team,
+# athlete or tournament id (homeId / awayId / teamId / tournamentId), or a venueName.
+# Read at start-up; a blocked league makes no request, a blocked id is never pushed.

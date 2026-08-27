@@ -1,0 +1,213 @@
+{
+  "title": "ATP & WTA Tennis Scores & Draws",
+  "description": "Pick ATP and/or WTA and a date range. Every match on the unauthenticated JSON feed espn.com uses — tour events and Grand Slams incl. qualifying — with per-set scores, round, seeds and result text. The other 31 leagues are also available.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "leagues": {
+      "title": "Leagues",
+      "type": "array",
+      "editor": "select",
+      "description": "atp and/or wta for tennis (default). The other leagues of the ESPN feed are also available here. Advanced: any raw ESPN path such as soccer/bra.1 is also accepted as a plain string; unknown paths return a free error row.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "nfl",
+          "ncaaf",
+          "nba",
+          "wnba",
+          "ncaab",
+          "ncaaw",
+          "mlb",
+          "nhl",
+          "mls",
+          "nwsl",
+          "epl",
+          "championship",
+          "fa-cup",
+          "la-liga",
+          "serie-a",
+          "bundesliga",
+          "ligue-1",
+          "eredivisie",
+          "primeira-liga",
+          "liga-mx",
+          "saudi-pro-league",
+          "wsl",
+          "ucl",
+          "uel",
+          "uecl",
+          "nations-league",
+          "world-cup",
+          "copa-libertadores",
+          "atp",
+          "wta",
+          "pga",
+          "f1",
+          "ufc"
+        ],
+        "enumTitles": [
+          "NFL",
+          "NCAA Football (FBS)",
+          "NBA",
+          "WNBA",
+          "NCAA Men's Basketball (D-I)",
+          "NCAA Women's Basketball",
+          "MLB",
+          "NHL",
+          "MLS",
+          "NWSL",
+          "Premier League",
+          "EFL Championship",
+          "FA Cup",
+          "La Liga",
+          "Serie A",
+          "Bundesliga",
+          "Ligue 1",
+          "Eredivisie",
+          "Primeira Liga",
+          "Liga MX",
+          "Saudi Pro League",
+          "Women's Super League",
+          "Champions League",
+          "Europa League",
+          "Conference League",
+          "UEFA Nations League",
+          "FIFA World Cup",
+          "Copa Libertadores",
+          "ATP Tennis",
+          "WTA Tennis",
+          "PGA Tour",
+          "Formula 1",
+          "UFC"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "prefill": [
+        "atp",
+        "wta"
+      ]
+    },
+    "mode": {
+      "title": "Mode",
+      "type": "string",
+      "editor": "select",
+      "description": "scoreboard = games/matches by date (default). schedule = a team's season schedule (needs teams). standings = league table for a season. teams = team directory. summary = box-score level rows for eventIds (leaders, scoring plays, team stats).",
+      "enum": [
+        "scoreboard",
+        "schedule",
+        "standings",
+        "teams",
+        "summary"
+      ],
+      "enumTitles": [
+        "Scoreboard (games by date)",
+        "Team schedule",
+        "Standings",
+        "Teams",
+        "Game summary"
+      ],
+      "default": "scoreboard"
+    },
+    "dateFrom": {
+      "title": "Date from",
+      "type": "string",
+      "editor": "datepicker",
+      "dateType": "absolute",
+      "nullable": true,
+      "description": "YYYY-MM-DD. Empty = today. Scoreboard mode only. Ranges are fetched in 7-day windows with limit=1000, so nothing is silently truncated. Max span 366 days.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "dateTo": {
+      "title": "Date to",
+      "type": "string",
+      "editor": "datepicker",
+      "dateType": "absolute",
+      "nullable": true,
+      "description": "YYYY-MM-DD inclusive. Empty = same as dateFrom.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "teams": {
+      "title": "Players (filter or schedule targets)",
+      "type": "array",
+      "editor": "stringList",
+      "description": "Tennis: player name substring (Alcaraz). Team sports: abbreviations, ESPN numeric ids or display names (LAL, 12, Arsenal). Scoreboard: keeps only matches involving these players/teams (dropped rows are free). Schedule: the teams to fetch.",
+      "default": []
+    },
+    "status": {
+      "title": "Game status",
+      "type": "string",
+      "editor": "select",
+      "description": "Keep only scheduled, live or final games. Filtering happens before billing.",
+      "enum": [
+        "all",
+        "scheduled",
+        "live",
+        "final"
+      ],
+      "default": "all"
+    },
+    "season": {
+      "title": "Season",
+      "type": "integer",
+      "editor": "number",
+      "nullable": true,
+      "description": "Season year for standings, schedule and teams modes (e.g. 2025). Empty = ESPN's current season.",
+      "minimum": 2001,
+      "maximum": 2030
+    },
+    "seasonType": {
+      "title": "Season type",
+      "type": "string",
+      "editor": "select",
+      "nullable": true,
+      "description": "1 = preseason, 2 = regular season, 3 = postseason. Schedule mode only.",
+      "enum": [
+        "1",
+        "2",
+        "3"
+      ],
+      "enumTitles": [
+        "Preseason",
+        "Regular season",
+        "Postseason"
+      ]
+    },
+    "eventIds": {
+      "title": "Event IDs (summary mode)",
+      "type": "array",
+      "editor": "stringList",
+      "description": "ESPN event ids from a scoreboard run, as league/id (nfl/401671789) or bare id when exactly one league is selected.",
+      "default": []
+    },
+    "includeOdds": {
+      "title": "Include pregame odds",
+      "type": "boolean",
+      "editor": "checkbox",
+      "description": "Copy the single sportsbook pregame line ESPN shows (provider, spread, over/under, moneylines) into the game row. No extra request; null when absent (tennis, UFC, finished games). Informational only.",
+      "default": true
+    },
+    "maxItems": {
+      "title": "Max items (charged rows)",
+      "type": "integer",
+      "editor": "number",
+      "description": "Hard stop on charged rows across all leagues. Your cost ceiling. 0 = no limit.",
+      "default": 1000,
+      "minimum": 0,
+      "maximum": 50000,
+      "unit": "rows"
+    },
+    "timezone": {
+      "title": "Timezone for dateLocal",
+      "type": "string",
+      "editor": "textfield",
+      "description": "IANA name (America/New_York). Used only to compute dateLocal; dates in the feed are UTC. An unknown name falls back to UTC with a free error row.",
+      "sectionCaption": "Advanced",
+      "default": "UTC"
+    }
+  },
+  "required": [
+    "leagues"
+  ]
+}

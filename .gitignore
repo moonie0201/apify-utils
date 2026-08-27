@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+# Apify local runtime state
+storage/
+apify_storage/
+actors/*/storage/
+.env
+# Agent/tooling scratch
+.omc/
+# Internal analysis: never published (COMPLIANCE §0)
+spec/
+legal/

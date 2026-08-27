@@ -1,0 +1,98 @@
+{
+  "title": "YouTube Thumbnail Downloader",
+  "description": "Paste YouTube video URLs or 11-character video IDs. Get every thumbnail size with availability, WebP variants, title and channel, and the files in your key-value store.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "videos": {
+      "title": "Video URLs or IDs",
+      "type": "array",
+      "editor": "stringList",
+      "description": "One per line. Accepted: watch?v=, youtu.be/, /shorts/, /embed/, /live/, /v/, m.youtube.com, music.youtube.com, youtube-nocookie.com, attribution_link, i.ytimg.com thumbnail URLs, or a bare 11-character video ID. Extra parameters (?t=, &list=, ?si=) are ignored. Playlist and channel URLs are not expanded; they produce a free error row. Repeated videos produce a free duplicate row.",
+      "prefill": [
+        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        "https://youtu.be/9bZkp7q19f0?si=abc",
+        "https://www.youtube.com/shorts/029uWKeBdEo",
+        "jNQXAC9IVRw"
+      ],
+      "minItems": 1,
+      "maxItems": 10000
+    },
+    "sizes": {
+      "title": "Sizes to download",
+      "type": "array",
+      "editor": "select",
+      "description": "best = the largest size that exists for that video, found with a HEAD probe, never guessed. all = every size that exists. oar = the 1920x1080 (or 1080x1920 for Shorts) original-aspect auto frames oar1-oar3; these are auto-generated frames, not the creator's custom thumbnail. Availability of every size is reported on the row regardless of this setting.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "best",
+          "all",
+          "maxresdefault",
+          "sddefault",
+          "hqdefault",
+          "mqdefault",
+          "default",
+          "oar"
+        ],
+        "enumTitles": [
+          "Best available",
+          "All sizes",
+          "maxresdefault 1280x720",
+          "sddefault 640x480",
+          "hqdefault 480x360",
+          "mqdefault 320x180",
+          "default 120x90",
+          "Original-aspect frames oar1-3 (1080p)"
+        ]
+      },
+      "default": [
+        "best"
+      ]
+    },
+    "format": {
+      "title": "Image format",
+      "type": "string",
+      "editor": "select",
+      "description": "jpg = /vi/ JPEG. webp = /vi_webp/ WebP, 30-55% smaller, same image. both = save both files. URLs for both formats are always on the row.",
+      "enum": [
+        "jpg",
+        "webp",
+        "both"
+      ],
+      "enumTitles": [
+        "JPEG",
+        "WebP",
+        "Both"
+      ],
+      "default": "jpg"
+    },
+    "includeMetadata": {
+      "title": "Title and channel (oEmbed)",
+      "type": "boolean",
+      "editor": "checkbox",
+      "description": "Fetch title, channel name and channel URL from YouTube's public oEmbed endpoint (no key, one extra request per video). If it fails the fields are null and the row is still delivered.",
+      "default": true
+    },
+    "saveImages": {
+      "title": "Save files to key-value store",
+      "type": "boolean",
+      "editor": "checkbox",
+      "description": "Store the selected sizes in this run's key-value store (your account only) under {videoId}_{size}.{jpg|webp}. Turn off to get URLs and metadata only — same price.",
+      "default": true
+    },
+    "maxVideos": {
+      "title": "Max videos (charged rows)",
+      "type": "integer",
+      "editor": "number",
+      "description": "Hard stop after this many charged rows. Your main cost control. Videos not reached are never charged. 0 = no limit.",
+      "default": 1000,
+      "minimum": 0,
+      "maximum": 10000,
+      "unit": "videos"
+    }
+  },
+  "required": [
+    "videos"
+  ]
+}

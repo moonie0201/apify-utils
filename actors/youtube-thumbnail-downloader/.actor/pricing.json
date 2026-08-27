@@ -1,0 +1,22 @@
+{
+  "title": "YouTube Thumbnail Downloader — All Sizes + WebP",
+  "description": "Every thumbnail size of a YouTube video in one row — default to maxresdefault, WebP variants, 1080p original-aspect frames for Shorts — with real availability flags, title and channel from YouTube's public oEmbed, and files saved to your key-value store. No API key, no browser, no proxy.",
+  "seoTitle": "YouTube Thumbnail Downloader – All Sizes, WebP",
+  "seoDescription": "Download YouTube thumbnails in every size (maxresdefault, sd, hq, mq) plus WebP and vertical Shorts frames, with title and channel. Failures free; no key.",
+  "categories": ["VIDEOS", "SOCIAL_MEDIA", "FOR_CREATORS"],
+  "minimalMaxTotalChargeUsd": 0.10,
+  "events": {
+    "apify-actor-start": {
+      "title": "Actor start",
+      "description": "Charged when the Actor starts running. Number of events charged depends on Actor memory (one event per GB, minimum one event).",
+      "priceUsd": 0,
+      "isPrimaryEvent": false
+    },
+    "video": {
+      "title": "Video",
+      "description": "One row for a video that exists: every thumbnail size with availability flags, WebP URLs, title and channel. The URLs are always delivered; files are saved to your key-value store when saveImages is on and the CDN served them. Not-found, invalid, duplicate, playlist and over-budget rows are free.",
+      "priceUsd": 0.005,
+      "isPrimaryEvent": true
+    }
+  }
+}

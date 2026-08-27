@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check scripts && ruff format --check scripts
+      - run: python -m pytest -q scripts
+      # The derived listing has no code of its own: assemble it and lint the result.
+      - run: python scripts/build_derived.py
+      - run: python scripts/validate_schemas.py build/tennis-scores-scraper
+  actor:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        actor: [espn-sports-scraper, pdf-text-extractor, youtube-thumbnail-downloader]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -r actors/${{ matrix.actor }}/requirements.txt -r requirements-dev.txt
+      - run: ruff check . && ruff format --check .
+        working-directory: actors/${{ matrix.actor }}
+      - run: python -m pytest -q -m "not live"
+        working-directory: actors/${{ matrix.actor }}
+      - run: python scripts/validate_schemas.py actors/${{ matrix.actor }}
+      # Each actor directory is its own build context and must build alone (UTILS_SPEC §4).
+      - run: docker build actors/${{ matrix.actor }}

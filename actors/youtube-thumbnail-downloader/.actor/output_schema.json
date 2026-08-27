@@ -1,0 +1,18 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "YouTube thumbnail downloader output",
+  "properties": {
+    "videos": {
+      "type": "string",
+      "title": "Videos",
+      "description": "One row per unique video: every thumbnail size with availability, WebP URLs, title, channel and the saved files, as a JSON array.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items?clean=true"
+    },
+    "files": {
+      "type": "string",
+      "title": "Thumbnail files",
+      "description": "The saved thumbnail files in this run's key-value store, keyed {videoId}_{size}.{jpg|webp}. Records need your API token outside the Console.",
+      "template": "{{links.apiDefaultKeyValueStoreUrl}}/keys"
+    }
+  }
+}

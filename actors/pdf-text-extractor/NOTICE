@@ -1,0 +1,35 @@
+pdf-text-extractor — third-party notices
+
+This Actor image bundles the following third-party software. Full licence texts ship
+inside the Python packages (`*.dist-info/licenses/`) and the Debian packages
+(`/usr/share/doc/<package>/copyright`) in the image.
+
+Python packages
+- pypdfium2 5.x — BSD-3-Clause OR Apache-2.0 (https://github.com/pypdfium2-team/pypdfium2)
+  The wheel bundles PDFium and its build dependencies; see
+  pypdfium2-*.dist-info/licenses/LICENSES/{Apache-2.0,BSD-3-Clause,CC-BY-4.0}.txt and
+  pypdfium2-*.dist-info/licenses/data/<platform>/BUILD_LICENSES/ for:
+    pdfium (BSD-3-Clause), pdfium-binaries (Apache-2.0 / BSD-3-Clause), abseil (Apache-2.0),
+    agg23 (BSD-style), fast_float (Apache-2.0 / MIT / BSL-1.0), freetype (FTL / GPLv2 dual;
+    FTL used), icu (Unicode / ICU licence), lcms (MIT), libjpeg_turbo (IJG / BSD-3-Clause /
+    zlib), libopenjpeg (BSD-2-Clause), libpng (PNG Reference Library licence), libtiff
+    (libtiff licence), llvm-libc (Apache-2.0 with LLVM exception), simdutf (Apache-2.0 /
+    MIT), zlib (zlib licence).
+- PDFium — BSD-3-Clause (Copyright 2014 The PDFium Authors; https://pdfium.googlesource.com/pdfium/)
+- pdfplumber — MIT (Copyright (c) 2015 Jeremy Singer-Vine; https://github.com/jsvine/pdfplumber)
+- pdfminer.six — MIT (https://github.com/pdfminer/pdfminer.six)
+- Pillow — MIT-CMU (https://github.com/python-pillow/Pillow)
+- apify (Apify SDK for Python) — Apache-2.0 (https://github.com/apify/apify-sdk-python)
+- httpx — BSD-3-Clause (https://github.com/encode/httpx)
+
+Debian packages (installed with apt in the Dockerfile)
+- tesseract-ocr, libtesseract5, tesseract-ocr-eng, tesseract-ocr-osd — Apache-2.0
+  (Copyright Google Inc. and contributors; https://github.com/tesseract-ocr/tesseract;
+  trained data https://github.com/tesseract-ocr/tessdata)
+- Leptonica (libleptonica, a Tesseract dependency) — BSD-2-Clause
+
+Not included: no AGPL-licensed PDF library is used anywhere in this Actor; pdfminer.six is reached
+only through pdfplumber.
+
+This Actor is not affiliated with, endorsed by or sponsored by Google (PDFium), the
+Tesseract maintainers or any of the projects above. Trademarks belong to their owners.

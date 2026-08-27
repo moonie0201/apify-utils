@@ -1,0 +1,6 @@
+# Dev/test only (UTILS_SPEC §4). Installed next to each actor's requirements.txt.
+pytest>=8
+pytest-asyncio>=0.23
+respx>=0.21
+ruff>=0.6
+pillow
