@@ -80,7 +80,7 @@ Public prices as of 2026-08-28 (Apify Store API): hgservices charges $0.001 per 
 | `dateFrom` / `dateTo` | string | today | Scoreboard window, 366 days max |
 | `teams` | array | `[]` | Games without these teams are dropped **before billing**; in schedule mode, the teams to fetch; tennis: player-name substring |
 | `status` | string | `all` | `scheduled`, `live` or `final` — filtered before billing |
-| `season` / `seasonType` | integer / string | ESPN's current | Standings, schedule, teams |
+| `season` / `seasonType` | integer / string | ESPN's current (teams mode: the most recent complete season) | Standings, schedule, teams |
 | `eventIds` | array | `[]` | Summary mode targets (`league/id`, or bare ids with one league) |
 | `includeOdds` | boolean | `true` | No cost effect; blanks the six odds fields when off |
 | `maxItems` | integer | `1000` | **Your cost ceiling** — hard stop on charged rows; `0` = no limit |
@@ -185,7 +185,7 @@ Every input and output field carries a description. Chain modes with `espnPath` 
 
 - The feed is undocumented and unauthenticated; ESPN may change or block it, and a block fails the run without charging.
 - Historical depth varies by league: MLB to 2001, NFL to 2005, ATP to 2015, most soccer leagues later.
-- The NBA team directory on the site feed lists 13 of 30 teams; the Actor reads the core feed instead and returns all 30.
+- Teams mode reads the core feed, not the site feed, and returns the full team list for the most recent complete season. ESPN opens the next season's directory before it is filled — on 2026-08-28 the NBA's "current" season was 2027 and listed 13 clubs while 2026 listed all 30 — so with no `season` the Actor compares the two, charges for the fuller list, and pushes a free `league_summary` row saying which season it used. Pass `season` to pin one and it is used exactly as given.
 - Tennis draws are whole-tournament payloads filtered to your dates; the tournament venue is used when a match has none.
 - College scoreboards need ESPN's `groups` parameter; the Actor sets it (FBS, Division I).
 - No play-by-play, news, rosters, athlete bios, injuries, video. Cricket, rugby and NASCAR are not carried. Odds are absent for tennis, UFC, golf, F1 and finished games.

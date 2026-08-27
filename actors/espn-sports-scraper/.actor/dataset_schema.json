@@ -914,7 +914,7 @@
           "null"
         ],
         "title": "Note",
-        "description": "Qualification note (Champions League, Relegation ...).",
+        "description": "Standings rows: qualification note (Champions League, Relegation ...). Free rows: why the Actor departed from the obvious choice, e.g. 'current season listing incomplete; used 2026'.",
         "example": "Champions League"
       },
       "rankChange": {
@@ -1073,6 +1073,15 @@
         "title": "Message",
         "description": "Free rows: what happened ('no fixtures in window — off-season', 'unknown league path', 'ESPN edge returned 403 — run stopped, nothing charged').",
         "example": "15 rows pushed"
+      },
+      "seasonUsed": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Season used",
+        "description": "Free rows, teams mode: the season the Actor charged for when ESPN's current-season team directory was still incomplete and the previous season's was fuller.",
+        "example": 2026
       }
     }
   },

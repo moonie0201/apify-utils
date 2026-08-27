@@ -490,23 +490,100 @@ async def test_teams_mode_403_on_a_ref_stops_without_firing_the_rest(actor, espn
 
 
 async def test_teams_mode_current_season_from_league_doc(actor, espn, fx):
-    espn.get(url__regex=re.escape(espn.core + "basketball/leagues/nba") + r"(\?.*)?$").mock(
-        return_value=json_response({"season": {"year": 2025}})
-    )
-    espn.get(
-        url__regex=re.escape(espn.core + "basketball/leagues/nba/seasons/2025/teams") + r"(\?.*)?$"
-    ).mock(
-        return_value=json_response(
-            {"items": [{"$ref": espn.core + "basketball/leagues/nba/seasons/2025/teams/1"}]}
-        )
-    )
-    espn.get(
-        url__regex=re.escape(espn.core + "basketball/leagues/nba/seasons/2025/teams/1")
-        + r"(\?.*)?$"
-    ).mock(return_value=json_response(fx("nba_core_team_1.json")))
+    _nba_season_doc(espn, 2025)
+    _nba_teams_listing(espn, 2025, 1)
+    _nba_teams_listing(espn, 2024, 0)
+    _nba_team_details(espn, fx, 2025)
     actor.input = {"leagues": ["nba"], "mode": "teams"}
     await main_mod.main()
     assert len(actor.charged_rows()) == 1 and actor.charged_rows()[0][0]["season"] == 2025
+
+
+# -- teams mode: ESPN opens the next season's directory before it is filled (2026-08-28: the
+# NBA's "current" season was 2027 with 13 of 30 clubs, 2026 had all 30).
+
+
+def _nba_season_doc(espn, year: int):
+    return espn.get(url__regex=re.escape(espn.core + "basketball/leagues/nba") + r"(\?.*)?$").mock(
+        return_value=json_response({"season": {"year": year}})
+    )
+
+
+def _nba_teams_listing(espn, season: int, count: int):
+    base = espn.core + f"basketball/leagues/nba/seasons/{season}/teams"
+    items = [{"$ref": f"http://{base.split('://', 1)[1]}/{i}?lang=en"} for i in range(1, count + 1)]
+    return espn.get(url__regex=re.escape(base) + r"(\?.*)?$").mock(
+        return_value=json_response({"count": count, "items": items})
+    )
+
+
+def _nba_team_details(espn, fx, season: int):
+    team = fx("nba_core_team_1.json")
+    return espn.get(
+        url__regex=re.escape(espn.core + f"basketball/leagues/nba/seasons/{season}/teams/")
+        + r"\d+(\?.*)?$"
+    ).mock(side_effect=lambda req: json_response(dict(team, id=req.url.path.rsplit("/", 1)[-1])))
+
+
+async def test_teams_mode_full_current_season_is_used_as_is(actor, espn, fx):
+    _nba_season_doc(espn, 2027)
+    _nba_teams_listing(espn, 2027, 30)
+    previous = _nba_teams_listing(espn, 2026, 30)
+    details = _nba_team_details(espn, fx, 2027)
+    actor.input = {"leagues": ["nba"], "mode": "teams"}
+    await main_mod.main()
+    charged = actor.charged_rows()
+    assert details.call_count == 30 and previous.call_count == 1
+    assert len(charged) == 30 and all(r["season"] == 2027 for r, _ in charged)
+    assert not any("seasonUsed" in r for r in actor.rows())
+
+
+async def test_teams_mode_short_current_season_falls_back_to_the_previous_one(actor, espn, fx):
+    _nba_season_doc(espn, 2027)
+    short = _nba_teams_listing(espn, 2027, 13)
+    _nba_teams_listing(espn, 2026, 30)
+    current_details = _nba_team_details(espn, fx, 2027)
+    details = _nba_team_details(espn, fx, 2026)
+    actor.input = {"leagues": ["nba"], "mode": "teams"}
+    await main_mod.main()
+    assert short.call_count == 1 and current_details.call_count == 0
+    charged = actor.charged_rows()
+    assert details.call_count == 30 and len(charged) == 30
+    assert {e for _, e in charged} == {"row"} and all(r["season"] == 2026 for r, _ in charged)
+    notes = [(r, e) for r, e in actor.pushed if r.get("seasonUsed") is not None]
+    assert len(notes) == 1
+    row, event = notes[0]
+    assert event is None  # free
+    assert row["recordType"] == "league_summary" and row["seasonUsed"] == 2026
+    assert row["note"] == "current season listing incomplete; used 2026"
+    assert "13 teams" in row["message"] and "Pass `season`" in row["message"]
+
+
+async def test_teams_mode_explicit_season_is_honoured_without_a_fallback(actor, espn, fx):
+    league_doc = _nba_season_doc(espn, 2027)
+    previous = _nba_teams_listing(espn, 2026, 30)
+    _nba_teams_listing(espn, 2027, 13)
+    details = _nba_team_details(espn, fx, 2027)
+    actor.input = {"leagues": ["nba"], "mode": "teams", "season": 2027}
+    await main_mod.main()
+    assert league_doc.call_count == 0 and previous.call_count == 0
+    charged = actor.charged_rows()
+    assert details.call_count == 13 and len(charged) == 13
+    assert all(r["season"] == 2027 for r, _ in charged)
+    assert not any("seasonUsed" in r for r in actor.rows())
+
+
+async def test_teams_mode_unavailable_previous_season_keeps_the_current_listing(actor, espn, fx):
+    _nba_season_doc(espn, 2027)
+    _nba_teams_listing(espn, 2027, 13)
+    espn.get(
+        url__regex=re.escape(espn.core + "basketball/leagues/nba/seasons/2026/teams") + r"(\?.*)?$"
+    ).mock(return_value=json_response({"error": "not found"}, 404))
+    details = _nba_team_details(espn, fx, 2027)
+    actor.input = {"leagues": ["nba"], "mode": "teams"}
+    await main_mod.main()
+    assert details.call_count == 13 and len(actor.charged_rows()) == 13
+    assert not actor.failed and not any("seasonUsed" in r for r in actor.rows())
 
 
 async def test_teams_mode_athlete_sport_is_free(actor, espn):

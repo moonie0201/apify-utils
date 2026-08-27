@@ -210,7 +210,7 @@ class Runner:
             "recordType": kind, "league": league, "mode": self.inp.mode,
             "window": f"{self.inp.date_from.isoformat()}..{self.inp.date_to.isoformat()}",
             "requests": extra.pop("requests", None), "itemsFound": extra.pop("itemsFound", None),
-            "message": message,
+            "message": message, **extra,
         }  # fmt: skip
 
     async def run(self) -> None:
@@ -368,22 +368,24 @@ class Runner:
             pushed += 1
         return len(rows), pushed, None
 
+    async def _team_refs(self, base: str, season: int) -> list[str]:
+        listing = await self.client.get_json(f"{base}/seasons/{season}/teams", {"limit": 200})
+        return [
+            it["$ref"].replace("http://", "https://", 1)
+            for it in listing.get("items") or []
+            if isinstance(it, dict) and isinstance(it.get("$ref"), str)
+        ]
+
     async def teams(self, league: League) -> tuple[int, int, str | None]:
         if league.athlete_sport:
             return 0, 0, "no teams for this league"
         base = f"{CORE}{league.sport}/leagues/{league.slug}"
         season = self.inp.season
-        if not season:
-            info = await self.client.get_json(base)
-            season = (info.get("season") or {}).get("year")
-            if not season:
-                raise EspnError(None, "could not determine the current season")
-        listing = await self.client.get_json(f"{base}/seasons/{season}/teams", {"limit": 200})
-        refs = [
-            it["$ref"].replace("http://", "https://", 1)
-            for it in listing.get("items") or []
-            if isinstance(it, dict) and isinstance(it.get("$ref"), str)
-        ]
+        if season:
+            refs = await self._team_refs(base, season)
+        else:
+            season, refs = await self._current_season_refs(league, base)
+        logger.info("teams mode: %s season %s, %d teams", league.key, season, len(refs))
         docs = await _chunked([lambda r=r: self.client.get_json(r) for r in refs])
         rows = [team_row(d, league, season) for d in docs]
         rows.sort(key=lambda r: str(r.get("displayName")))
@@ -395,6 +397,44 @@ class Runner:
                 break
             pushed += 1
         return len(rows), pushed, None
+
+    async def _current_season_refs(self, league: League, base: str) -> tuple[int, list[str]]:
+        """Season and team refs to charge for when the buyer passed no ``season``.
+
+        ESPN opens the next season's directory before it is populated: on 2026-08-28 the NBA's
+        "current" season was 2027 and ``seasons/2027/teams`` listed 13 of 30 clubs, while 2026
+        listed all 30. Charging `row` for a partial directory is the buyer's money, so compare
+        the current listing with the previous season's and take the fuller one, saying so in a
+        free row. An explicit ``season`` is always honoured as-is.
+        """
+        info = await self.client.get_json(base)
+        year = (info.get("season") or {}).get("year")
+        if not year:
+            raise EspnError(None, "could not determine the current season")
+        season = int(year)
+        refs = await self._team_refs(base, season)
+        try:
+            previous = await self._team_refs(base, season - 1)
+        except EspnError as exc:  # EdgeBlocked still propagates and stops the run
+            logger.info("season %s listing unavailable (%s)", season - 1, exc.message)
+            return season, refs
+        if len(previous) <= len(refs):
+            return season, refs
+        message = (
+            f"{league.key} season {season} lists {len(refs)} teams, season {season - 1} lists "
+            f"{len(previous)}; charged for season {season - 1}. Pass `season` to pin one."
+        )
+        await self.budget.push_free(
+            self.free_row(
+                league.key,
+                message,
+                kind="league_summary",
+                itemsFound=len(previous),
+                seasonUsed=season - 1,
+                note=f"current season listing incomplete; used {season - 1}",
+            )
+        )
+        return season - 1, previous
 
     # -- summary -------------------------------------------------------------------
 
