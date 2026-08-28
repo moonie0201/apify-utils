@@ -57,7 +57,7 @@ GAME_COLUMNS = (
     "homeRecord", "homeRank", "homeCountry", "homeLinescores",
     "awayId", "awayName", "awayAbbr", "awayShortName", "awayLogo", "awayScore", "awayWinner",
     "awayRecord", "awayRank", "awayCountry", "awayLinescores",
-    "winnerId", "resultText", "position", "scoreDisplay",
+    "winnerId", "resultText", "liveNote", "position", "scoreDisplay",
     "venueName", "venueCity", "venueState", "venueCountry", "venueIndoor", "court",
     "attendance", "neutralSite", "broadcasts",
     "oddsProvider", "oddsDetails", "spread", "overUnder", "homeMoneyline", "awayMoneyline",
@@ -127,7 +127,13 @@ def map_status(status: dict[str, Any] | None) -> tuple[str, str | None, bool]:
     name = STATUS_MAP.get(str(t.get("name") or ""))
     if name is None:
         name = _STATE_FALLBACK.get(str(t.get("state") or ""), "scheduled")
-    return name, t.get("detail") or t.get("description"), bool(t.get("completed", name == "final"))
+    # ESPN sets type.completed on round-level markers too: a golf competition mid-tournament
+    # reports STATUS_PLAY_COMPLETE + completed:true while the event itself is IN_PROGRESS
+    # (verified live 2026-08-28, TOUR Championship 401811964, round 1 of 4). Trusting that
+    # flag made every leaderboard row completed:true and let golf_rows/f1_rows name a winner
+    # ESPN had not declared. `completed` may only be true when our own status is "final".
+    completed = bool(t.get("completed", name == "final")) and name == "final"
+    return name, t.get("detail") or t.get("description"), completed
 
 
 def _num(value: Any) -> int | float | None:
@@ -387,6 +393,18 @@ def _winner_id(home: dict | None, away: dict | None) -> str | None:
     return None
 
 
+def _note_fields(comp: dict[str, Any], completed: bool) -> dict[str, str | None]:
+    """ESPN's note text: a result only once the match is over, otherwise the state of play.
+
+    ESPN phrases an unfinished match's note exactly like a finished one — a
+    STATUS_SCHEDULED competition carries "A (AUT) bt B (GBR) 4-6 6-4 3-2" while the
+    third set is still being played — so the text is a result only when ``completed``
+    says it is. Verified on tennis/atp/scoreboard, 2026-08-28.
+    """
+    text = next((n.get("text") for n in comp.get("notes") or [] if n.get("text")), None)
+    return {"resultText": text if completed else None, "liveNote": None if completed else text}
+
+
 def tennis_rows(
     event: dict[str, Any], league: League, tz: ZoneInfo, start: date, end: date
 ) -> list[dict[str, Any]]:
@@ -424,9 +442,7 @@ def tennis_rows(
                 completed=completed,
                 period=(m.get("status") or {}).get("period"),
                 competitorType="athlete",
-                resultText=next(
-                    (n.get("text") for n in m.get("notes") or [] if n.get("text")), None
-                ),
+                **_note_fields(m, completed),
                 broadcasts=_broadcasts(m),
                 espnUrl=_espn_url(event),
             )
@@ -442,8 +458,12 @@ def golf_rows(event: dict[str, Any], league: League, tz: ZoneInfo) -> list[dict[
     comp = (event.get("competitions") or [{}])[0]
     status, detail, completed = map_status(comp.get("status") or event.get("status"))
     season = event.get("season") or {}
+    competitors = sorted(comp.get("competitors") or [], key=lambda c: c.get("order") or 0)
+    # ESPN flags the winner on finished events; the order == 1 fallback is only for finished
+    # events where it leaves every flag unset, never alongside a flag (that emitted two winners).
+    flagged = any(c.get("winner") for c in competitors)
     rows = []
-    for c in sorted(comp.get("competitors") or [], key=lambda c: c.get("order") or 0):
+    for c in competitors:
         row = _base(league, tz, "site.api.espn.com")
         row.update(_athlete_side(c, "home"))
         row.update(_athlete_side(None, "away"))
@@ -467,7 +487,11 @@ def golf_rows(event: dict[str, Any], league: League, tz: ZoneInfo) -> list[dict[
             competitorType="athlete",
             position=c.get("order"),
             scoreDisplay=c.get("score") if isinstance(c.get("score"), str) else None,
-            winnerId=c.get("id") if c.get("order") == 1 and completed else None,
+            winnerId=(
+                c.get("id")
+                if c.get("winner") or (not flagged and c.get("order") == 1 and completed)
+                else None
+            ),
             broadcasts=_broadcasts(comp),
             espnUrl=_espn_url(event),
         )
@@ -561,9 +585,7 @@ def ufc_rows(event: dict[str, Any], league: League, tz: ZoneInfo) -> list[dict[s
             period=st.get("period"),
             clock=st.get("displayClock"),
             competitorType="athlete",
-            resultText=next(
-                (n.get("text") for n in comp.get("notes") or [] if n.get("text")), None
-            ),
+            **_note_fields(comp, completed),
             broadcasts=_broadcasts(comp),
             espnUrl=_espn_url(event),
         )

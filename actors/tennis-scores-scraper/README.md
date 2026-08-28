@@ -29,8 +29,11 @@ A tournament is one payload on ESPN: Wimbledon 2025 is 635 matches across five d
 | `homeCountry` / `awayCountry` | Country from ESPN's flag |
 | `homeLinescores` / `awayLinescores` | Games per set (`[6, 6, 6]` vs `[4, 2, 3]`) |
 | `status` | `scheduled`, `live`, `final` (retirements and walkovers map to `final` with `statusDetail` set) |
-| `resultText` | ESPN's result line with tiebreak points and retirements |
+| `resultText` | ESPN's result line with tiebreak points and retirements — only when `completed` is true |
+| `liveNote` | The same ESPN line while the match is unfinished: the state of play at fetch time, not a result |
 | `court`, `venueName` | Court and tournament venue |
+
+ESPN phrases that line the same way whether the match is over or still on court (`bt` = beat, even mid-set), so the Actor splits it in two: a finished match fills `resultText` and leaves `liveNote` null, an unfinished one fills `liveNote` and leaves `resultText` null.
 
 `teams` doubles as a **player filter** — `["Alcaraz", "Swiatek"]` keeps only matches involving those names, and the dropped matches are free.
 
@@ -78,10 +81,16 @@ This listing is the same Actor as `espn-sports-scraper` with tennis defaults, so
   "status": "final", "statusDetail": "Final", "completed": true, "period": 3, "competitorType": "athlete",
   "homeId": "2367", "homeName": "Karen Khachanov", "homeShortName": "K. Khachanov", "homeCountry": "Russia", "homeRank": 17, "homeWinner": true, "homeLinescores": [6, 6, 6],
   "awayId": "2416", "awayName": "Kamil Majchrzak", "awayShortName": "K. Majchrzak", "awayCountry": "Poland", "awayRank": null, "awayWinner": false, "awayLinescores": [4, 2, 3],
-  "winnerId": "2367", "resultText": "(17) Karen Khachanov (RUS) bt Kamil Majchrzak (POL) 6-4 6-2 6-3",
+  "winnerId": "2367", "resultText": "(17) Karen Khachanov (RUS) bt Kamil Majchrzak (POL) 6-4 6-2 6-3", "liveNote": null,
   "court": "No. 1 Court", "venueName": "London, Great Britain", "oddsProvider": null,
   "espnUrl": "https://www.espn.com/tennis/scoreboard/tournament/_/eventId/188-2025/competitionType/1", "scrapedAt": "2026-08-28T03:00:12Z"
 }
+```
+
+The same match while it is still being played — the note moves to `liveNote` and `resultText` stays null:
+
+```json
+{"id": "184679", "status": "scheduled", "completed": false, "resultText": null, "liveNote": "Jurij Rodionov (AUT) bt Jacob Fearnley (GBR) 4-6 6-4 3-2"}
 ```
 
 A free off-season row:

@@ -1,0 +1,102 @@
+{
+ "events": [
+  {
+   "id": "401811964",
+   "uid": "s:1100~l:1106~e:401811964",
+   "name": "TOUR Championship",
+   "shortName": "TOUR Championship",
+   "date": "2026-08-27T04:00Z",
+   "endDate": "2026-08-30T04:00Z",
+   "season": {
+    "year": 2026,
+    "type": 2,
+    "slug": "regular-season"
+   },
+   "status": {
+    "type": {
+     "id": "2",
+     "name": "STATUS_IN_PROGRESS",
+     "state": "in",
+     "completed": false,
+     "description": "In Progress"
+    }
+   },
+   "competitions": [
+    {
+     "id": "401811964",
+     "uid": "s:1100~l:1106~e:401811964~c:401811964",
+     "date": "2026-08-27T04:00Z",
+     "endDate": "2026-08-30T04:00Z",
+     "status": {
+      "period": 1,
+      "type": {
+       "id": "35",
+       "name": "STATUS_PLAY_COMPLETE",
+       "state": "post",
+       "completed": true,
+       "description": "Play Complete",
+       "detail": "Round 1 - Play Complete",
+       "shortDetail": "Round 1 - Play Complete"
+      }
+     },
+     "competitors": [
+      {
+       "id": "4410932",
+       "uid": "s:1100~l:1106~a:4410932",
+       "order": 1,
+       "score": "-8",
+       "athlete": {
+        "fullName": "Min Woo Lee",
+        "displayName": "Min Woo Lee",
+        "shortName": "M. Lee",
+        "flag": {
+         "href": "https://a.espncdn.com/i/teamlogos/countries/500/aus.png",
+         "alt": "Australia",
+         "rel": [
+          "country-flag"
+         ]
+        }
+       }
+      },
+      {
+       "id": "4364873",
+       "uid": "s:1100~l:1106~a:4364873",
+       "order": 2,
+       "score": "-6",
+       "athlete": {
+        "fullName": "Viktor Hovland",
+        "displayName": "Viktor Hovland",
+        "shortName": "V. Hovland",
+        "flag": {
+         "href": "https://a.espncdn.com/i/teamlogos/countries/500/nor.png",
+         "alt": "Norway",
+         "rel": [
+          "country-flag"
+         ]
+        }
+       }
+      },
+      {
+       "id": "10592",
+       "uid": "s:1100~l:1106~a:10592",
+       "order": 3,
+       "score": "-6",
+       "athlete": {
+        "fullName": "Collin Morikawa",
+        "displayName": "Collin Morikawa",
+        "shortName": "C. Morikawa",
+        "flag": {
+         "href": "https://a.espncdn.com/i/teamlogos/countries/500/usa.png",
+         "alt": "USA",
+         "rel": [
+          "country-flag"
+         ]
+        }
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

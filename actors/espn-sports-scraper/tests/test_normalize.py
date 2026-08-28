@@ -240,9 +240,30 @@ def test_tennis_window_filter_and_fields(fx):
     assert r["homeLinescores"] == [6, 6, 6] and r["awayLinescores"] == [4, 2, 3]
     assert r["homeRank"] == 17 and r["homeCountry"] == "Russia" and r["awayCountry"] == "Poland"
     assert r["resultText"].endswith("6-4 6-2 6-3") and r["winnerId"] == r["homeId"]
+    assert r["liveNote"] is None
     assert r["court"] and r["venueName"] == "London, Great Britain"
     assert r["homeAbbr"] is None and r["oddsProvider"] is None
     assert "headshot" not in str(r) and "guid" not in str(r)
+
+
+def test_unfinished_note_goes_to_live_note_not_result_text(fx):
+    """ESPN's note reads like a final score on a match still being played.
+
+    Captured 2026-08-28 from tennis/atp/scoreboard: US Open qualifying 184679 is
+    STATUS_SCHEDULED and carries "Jurij Rodionov (AUT) bt Jacob Fearnley (GBR) 4-6 6-4 3-2"
+    — 3-2 in the deciding set, not a result. Only a completed match may fill resultText.
+    """
+    payload = fx("atp_scheduled_note.json")
+    rows = tennis_rows(
+        payload["events"][0], LEAGUES["atp"], UTC, date(2026, 8, 27), date(2026, 8, 28)
+    )
+    done, playing = rows
+    assert done["completed"] and done["status"] == "final"
+    assert done["resultText"] == "Chak Lam Coleman Wong (HKG) bt Dusan Lajovic (SER) 6-4 6-3"
+    assert done["liveNote"] is None
+    assert not playing["completed"] and playing["status"] == "scheduled"
+    assert playing["resultText"] is None
+    assert playing["liveNote"] == "Jurij Rodionov (AUT) bt Jacob Fearnley (GBR) 4-6 6-4 3-2"
 
 
 def test_tennis_doubles_and_player_filter(fx):
@@ -445,3 +466,36 @@ def test_summary_row_extras_and_exclusions(fx):
 def test_assert_clean_rejects():
     with pytest.raises(ValueError):
         assert_clean({"id": 1, "headlines": []})
+
+
+def test_a_round_marker_never_completes_a_multi_round_event(fx):
+    """ESPN sets type.completed on round-level markers: mid-tournament a golf competition
+    reports STATUS_PLAY_COMPLETE + completed:true while the event is STATUS_IN_PROGRESS
+    (captured live 2026-08-28, TOUR Championship 401811964, round 1 of 4, no competitor
+    flagged winner). Trusting it made every leaderboard row completed:true and let
+    golf_rows name a champion three days early."""
+    payload = fx("pga_round_complete.json")
+    comp = payload["events"][0]["competitions"][0]
+    assert comp["status"]["type"]["name"] == "STATUS_PLAY_COMPLETE"
+    assert comp["status"]["type"]["completed"] is True
+    assert {c.get("winner") for c in comp["competitors"]} == {None}
+
+    status, _, completed = map_status(comp["status"])
+    assert (status, completed) == ("live", False)
+
+    rows = scoreboard_rows(payload, LEAGUES["pga"], UTC, date(2026, 8, 27), date(2026, 8, 30))
+    assert rows, "the fixture must produce leaderboard rows"
+    assert not any(r["completed"] for r in rows)
+    assert not any(r["winnerId"] for r in rows)
+    # The leader is still reported, just not as a winner.
+    assert rows[0]["position"] == 1 and rows[0]["scoreDisplay"]
+
+
+def test_espns_own_winner_flag_still_wins_a_leaderboard(fx):
+    payload = fx("pga_round_complete.json")
+    comp = payload["events"][0]["competitions"][0]
+    comp["status"]["type"] = {"name": "STATUS_FINAL", "completed": True, "detail": "Final"}
+    comp["competitors"][1]["winner"] = True
+    rows = scoreboard_rows(payload, LEAGUES["pga"], UTC, date(2026, 8, 27), date(2026, 8, 30))
+    winners = [r["winnerId"] for r in rows if r["winnerId"]]
+    assert winners == [comp["competitors"][1]["id"]]

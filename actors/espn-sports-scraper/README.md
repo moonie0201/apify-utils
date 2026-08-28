@@ -115,8 +115,15 @@ A Wimbledon match row (tennis fills the same slots):
   "date": "2025-07-06T10:10Z", "status": "final", "competitorType": "athlete",
   "homeName": "Karen Khachanov", "homeCountry": "Russia", "homeRank": 17, "homeWinner": true, "homeLinescores": [6, 6, 6],
   "awayName": "Kamil Majchrzak", "awayCountry": "Poland", "awayLinescores": [4, 2, 3],
-  "resultText": "(17) Karen Khachanov (RUS) bt Kamil Majchrzak (POL) 6-4 6-2 6-3", "court": "No. 1 Court", "venueName": "London, Great Britain"
+  "resultText": "(17) Karen Khachanov (RUS) bt Kamil Majchrzak (POL) 6-4 6-2 6-3", "liveNote": null,
+  "court": "No. 1 Court", "venueName": "London, Great Britain"
 }
+```
+
+ESPN writes one note line per tennis or UFC match and phrases it the same way whether the match is over or still on court, so the Actor splits it: `resultText` carries it only when `completed` is true, and while the match is unfinished the same text goes to `liveNote` — the state of play at fetch time, not a result — with `resultText` null.
+
+```json
+{"id": "184679", "status": "scheduled", "completed": false, "resultText": null, "liveNote": "Jurij Rodionov (AUT) bt Jacob Fearnley (GBR) 4-6 6-4 3-2"}
 ```
 
 A Premier League standing row:

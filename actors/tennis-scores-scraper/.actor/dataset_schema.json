@@ -458,8 +458,17 @@
           "null"
         ],
         "title": "Result text",
-        "description": "ESPN's one-line result note for tennis and UFC.",
+        "description": "ESPN's one-line note for a tennis or UFC match, kept only when 'completed' is true. Null on every row that is not completed \u2014 see 'liveNote'.",
         "example": "(17) Karen Khachanov (RUS) bt Kamil Majchrzak (POL) 6-4 6-2 6-3"
+      },
+      "liveNote": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Live note",
+        "description": "ESPN's one-line note for a tennis or UFC match that is not completed: the state of play at fetch time, not a result. ESPN phrases it like a finished match ('bt' = beat) even mid-set, so read it against 'status' and 'completed'. Null once the match is completed.",
+        "example": "Jurij Rodionov (AUT) bt Jacob Fearnley (GBR) 4-6 6-4 3-2"
       },
       "position": {
         "type": [
