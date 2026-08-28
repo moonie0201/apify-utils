@@ -41,6 +41,8 @@ ROOT = Path(__file__).resolve().parent.parent
 API = "https://api.apify.com/v2/acts"
 USERNAME = "acotr_moonie"
 APIFY_MARGIN = 0.2
+
+
 def load_pricing(name: str) -> dict[str, Any]:
     return json.loads((ROOT / "actors" / name / ".actor" / "pricing.json").read_text("utf-8"))
 
