@@ -10,7 +10,10 @@ for id in kspHEgiVbbygCTYgm 5yuG1HwxAE6evpjMW; do
   r=$(curl -s -X PUT -H "Authorization: Bearer $T" -H "Content-Type: application/json" \
        -d '{"isPublic":true}' "https://api.apify.com/v2/acts/$id")
   echo "$(date -u +%FT%TZ) $id $(echo "$r" | head -c 200)" >> "$LOG"
-  echo "$r" | grep -q '"isPublic":true' && ok=$((ok+1))
+  # Herestring, not a pipe: `grep -q` exits on the first match and SIGPIPEs the
+  # writer, which `set -o pipefail` then reports as a failed pipeline (the reason
+  # this check reported "not yet" on runs that had actually published).
+  grep -q '"isPublic": *true' <<<"$r" && ok=$((ok+1))
 done
 [ "$ok" -eq 2 ] && echo "both public" && exit 0
 echo "not yet ($ok/2) — see $LOG"; exit 1
