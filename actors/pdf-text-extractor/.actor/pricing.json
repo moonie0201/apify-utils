@@ -3,7 +3,11 @@
   "description": "Text, markdown, ruled tables and RAG chunks from PDF URLs, one item per page or per document, with optional Tesseract OCR for scanned pages. Built on PDFium: 140 pages in about a second. Charged per page delivered; document summaries, errors and skipped pages are free.",
   "seoTitle": "PDF Text Extractor – Tables, Markdown, OCR, Chunks",
   "seoDescription": "Extract text, markdown, ruled tables and RAG chunks from PDF URLs. Per-page or per-document output, optional OCR for scans, free error and summary rows.",
-  "categories": ["AUTOMATION", "DEVELOPER_TOOLS", "AI"],
+  "categories": [
+    "DEVELOPER_TOOLS",
+    "AI",
+    "AUTOMATION"
+  ],
   "minimalMaxTotalChargeUsd": 0.05,
   "events": {
     "apify-actor-start": {

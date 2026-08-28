@@ -102,6 +102,9 @@ def request(
         sys.exit(f"{method} {url} -> {exc.code}: {exc.read().decode(errors='replace')}")
 
 
+# NOTE (2026-08-29): a PUT that carries pricingInfos silently drops some categories —
+# SPORTS and FOR_CREATORS were accepted only when sent in a categories-only PUT. Send
+# categories separately (or re-check them after) rather than trusting one combined call.
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("name", help="actor directory name under actors/")

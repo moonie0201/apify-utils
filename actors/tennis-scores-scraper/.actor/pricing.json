@@ -5,7 +5,7 @@
   "seoDescription": "ATP and WTA match scores, draws, rounds, seeds and set scores by date from the JSON feeds behind espn.com. Flat rows, failures free. No ITF/Challenger.",
   "categories": [
     "SPORTS",
-    "AUTOMATION"
+    "NEWS"
   ],
   "minimalMaxTotalChargeUsd": 0.1,
   "events": {
