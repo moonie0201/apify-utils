@@ -1,4 +1,4 @@
-# ESPN Sports Scores & Standings — 30+ Leagues
+# ESPN Sports Odds, Scores & Standings — 30 Leagues
 
 > **Unofficial.** Not affiliated with, endorsed by or sponsored by ESPN, The Walt Disney Company or any league.
 > Data comes from the unauthenticated JSON feeds that espn.com itself uses; they are undocumented,
@@ -10,7 +10,7 @@
 > **Removal requests:** [TAKEDOWN.md](https://github.com/moonie0201/apify-utils/blob/main/TAKEDOWN.md) — honoured in 48 h.
 > **Privacy:** [PRIVACY.md](https://github.com/moonie0201/apify-utils/blob/main/PRIVACY.md).
 
-One flat row schema across **33 leagues and five modes** — scoreboard, team schedule, standings, team directory and game summary. NFL, NBA, WNBA, MLB, NHL, college football and basketball, MLS, NWSL, 18 more soccer competitions, ATP and WTA tennis with full draws, sets, rounds and seeds, PGA Tour leaderboards, Formula 1 sessions and UFC bouts. Date ranges go back to **2001** for MLB (`dates=20010405` returns 13 games), 2005 for the NFL and 2015 for the ATP. The single pregame line ESPN displays is copied into the row at no extra request. No proxy, no key, no standby, no browser — and every failure, filtered-out game and off-season notice is free.
+One flat row schema across **33 leagues and five modes** — scoreboard, team schedule, standings, team directory and game summary. NFL, NBA, WNBA, MLB, NHL, college football and basketball, MLS, NWSL, 18 more soccer competitions, ATP and WTA tennis with full draws, sets, rounds and seeds, PGA Tour leaderboards, Formula 1 sessions and UFC bouts. Date ranges go back to **2001** for MLB (`dates=20010405` returns 13 games), 2005 for the NFL and 2015 for the ATP. The single pregame line ESPN displays — spread, over/under and both moneylines — is copied into the row at no extra request; it is present on upcoming games and drops off once a game is final (13 of 13 NFL games on 2026-09-13 carried a full line, 68 of 68 college football games on 2026-09-05 carried spread and total). No proxy, no key, no standby, no browser — and every failure, filtered-out game and off-season notice is free.
 
 **What this is not:** no news, articles, rosters, injuries, athlete bios, play-by-play or video — those are ESPN's editorial content and this Actor never requests them. No ITF or Challenger tennis, no cricket, no rugby, no NASCAR: ESPN's feeds do not carry them.
 

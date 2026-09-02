@@ -1,8 +1,8 @@
 {
   "actorSpecification": 1,
   "name": "espn-sports-scraper",
-  "title": "ESPN Sports Scores & Standings — 30+ Leagues",
-  "description": "Scores, schedules, standings and teams from the unauthenticated JSON feeds espn.com itself uses — NFL, NBA, MLB, NHL, college, 20 soccer competitions, ATP/WTA tennis, PGA, F1, UFC — in one flat row schema with pregame odds included. Date ranges back to 2001. Unofficial; no proxy, no key, no standby.",
+  "title": "ESPN Sports Odds, Scores & Standings — 30 Leagues",
+  "description": "Scores, schedules, standings, teams and the pregame line — spread, over/under and both moneylines — from the JSON feeds espn.com itself uses. NFL, NBA, MLB, NHL, college, 20 soccer leagues, ATP/WTA, PGA, F1, UFC in one flat schema. Odds on upcoming games only. Back to 2001. Unofficial, no key.",
   "version": "0.1",
   "buildTag": "latest",
   "minMemoryMbytes": 256,
