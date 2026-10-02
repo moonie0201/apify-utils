@@ -12,7 +12,9 @@ Paste PDF URLs, get text back — as one row per page, one row per document, or 
 with page and character offsets. PDFium does the reading: a 142-page US tax publication came
 back in 1.2 s in our measurements. Optional heuristic markdown, ruled-table extraction and
 Tesseract OCR for scanned pages ride along in the same Actor. You pay **per page delivered**;
-the document summary row, error rows, duplicates and pages you skipped cost nothing.
+the document summary row, error rows, duplicates and skipped pages incur no page/OCR event charge.
+Platform compute or storage costs may still apply under your account and run pricing,
+including developer-owned runs. Here, "free rows" means no Actor event charge for those rows.
 
 ## What it extracts
 
@@ -225,7 +227,7 @@ single price to reason about. PDF fetch and parse errors are typed rows. Billing
 - A document-mode row over 8 MB drops `markdown` and `pages[].text` (`errorCode:
   item_too_large`); `text` is kept, so the page charge stands. If `text` alone still exceeds
   the platform's 9 MB item limit, the row is delivered as a free `item_too_large` error row
-  without content and nothing is charged — use `page` or `chunk` mode for such documents.
+  without content and no page/OCR event is charged — use `page` or `chunk` mode for such documents.
 - Image size: 628 MB as measured on the first build (PDFium, pdfplumber, Tesseract and the
   English language pack).
 

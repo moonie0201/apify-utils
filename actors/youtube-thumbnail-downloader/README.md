@@ -4,7 +4,9 @@
 
 > **Unofficial.** Not affiliated with, endorsed by or sponsored by YouTube or Google LLC.
 > This Actor reads YouTube's public thumbnail CDN and public oEmbed endpoint.
-> YouTube may change or block access without notice — if that happens the run fails and charges nothing.
+> YouTube may change or block access without notice. Failed video rows incur no video event charge;
+> successfully delivered videos remain billable. Platform compute or storage costs may still
+> apply under your account and run pricing, including developer-owned runs.
 > Thumbnails and titles are the creators' and YouTube's content; you are responsible for
 > downstream use. **Removal requests:** [TAKEDOWN.md](https://github.com/moonie0201/apify-utils/blob/main/TAKEDOWN.md)
 > — honoured in 48 hours, for future runs. **Privacy:** [PRIVACY.md](https://github.com/moonie0201/apify-utils/blob/main/PRIVACY.md).
