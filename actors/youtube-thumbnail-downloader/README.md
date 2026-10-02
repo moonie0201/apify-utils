@@ -201,7 +201,7 @@ Open an issue on the Actor's Issues tab or at <https://github.com/moonie0201/api
 
 ## Disclaimer
 
-This Actor is unofficial. It is not affiliated with, endorsed by or sponsored by YouTube or Google LLC. It reads YouTube's public thumbnail CDN and public oEmbed endpoint, both of which YouTube may change or block access without notice; if that happens the run fails and charges nothing. All trademarks belong to their respective owners.
+This Actor is unofficial. It is not affiliated with, endorsed by or sponsored by YouTube or Google LLC. It reads YouTube's public thumbnail CDN and public oEmbed endpoint, both of which YouTube may change or block access without notice; failed video rows incur no video event charge, while successfully delivered videos remain billable and account platform costs may still apply. All trademarks belong to their respective owners.
 
 You are responsible for how you use the images downstream; thumbnails remain the creators' works, and titles and channel names are the creators' and YouTube's content. Removal requests are honoured for future runs within 48 hours: [TAKEDOWN.md](https://github.com/moonie0201/apify-utils/blob/main/TAKEDOWN.md).
 
