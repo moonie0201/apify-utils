@@ -365,3 +365,22 @@ def test_selected_sizes():
 
 def test_shipped_blocklist_parses():
     assert main.load_blocklist() == set()
+
+
+async def test_failed_inflight_video_releases_slot_for_waiting_valid_video(
+    cdn, client, base_input, monkeypatch
+):
+    attempted = []
+
+    async def probe_video(self, input_url, video_id):
+        attempted.append(video_id)
+        await asyncio.sleep(0.01)
+        return main.make_row(input_url, video_id, "not_found" if video_id == DEAD else "ok")
+
+    monkeypatch.setattr(main.Run, "probe_video", probe_video)
+    actor, budget = await asyncio.wait_for(
+        run(cdn, client, base_input, videos=[DEAD, ID, OLD], maxVideos=1), timeout=2
+    )
+    assert budget.delivered == 1 and budget.charged == 1
+    assert attempted[0] == DEAD and len(attempted) == 2
+    assert sorted(row["status"] for row in actor.rows()) == ["budget_exhausted", "not_found", "ok"]

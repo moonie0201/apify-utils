@@ -273,7 +273,7 @@ def parse_document(path: Path, opts: Options) -> dict:
                     and (opts.max_ocr_pages is None or ocr_done < opts.max_ocr_pages)
                 ):
                     text = ocr_page(page, opts, number)
-                    if text is not None:
+                    if text is not None and text.strip():
                         text = normalize_text(text)
                         row.update(
                             text=text,

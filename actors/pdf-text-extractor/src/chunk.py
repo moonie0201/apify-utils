@@ -57,7 +57,7 @@ def chunk_pages(pages: list[dict], chunk_size: int, overlap: int) -> list[dict]:
     chunks: list[dict] = []
     start = 0
     while start < n:
-        while start < n and full[start] in " \n":
+        while start < n and full[start].isspace():
             start += 1
         if start >= n:
             break

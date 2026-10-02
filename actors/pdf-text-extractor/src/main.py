@@ -106,6 +106,14 @@ def parse_input(raw: dict) -> Settings:
     )
 
 
+def confirmed_charge_count(result: Any) -> int:
+    """Missing charge responses are unknown, never evidence of a free result."""
+    count = getattr(result, "charged_count", None)
+    if isinstance(count, bool) or not isinstance(count, int) or count < 0:
+        raise ValueError("Invalid charging response: charged_count must be a nonnegative integer")
+    return count
+
+
 def charge_cap(actor: Any, input_cap: int | None, event: str) -> int | None:
     """None = unlimited. calculate_max_event_charge_count_within_limit returns None when the
     event has no price (every non-PPE run: `apify run` locally, the dev's own runs, FREE-record
@@ -135,6 +143,7 @@ class Run:
         self.documents = 0
         self.unprocessed = 0
         self.stopped: str | None = None
+        self.delivery_lock = asyncio.Lock()
 
     # ----------------------------------------------------------------- orchestration
 
@@ -184,6 +193,8 @@ class Run:
     async def process(self, client: Any, url: str) -> None:
         started = datetime.now(UTC)
         stop = self.stop_reason()
+        if not stop and self.page_budget() == 0:
+            self.stopped = stop = "budget_exhausted"
         if stop:
             self.unprocessed += 1
             await self.push_document(url, None, None, error_code=stop, started=started)
@@ -250,10 +261,18 @@ class Run:
             )
             await self.push_document(url, fetched, parsed, error_code=code, started=started)
             return
-        await self.deliver(url, fetched, parsed, started)
+        # Downloads and parsing remain concurrent; only shared delivery/billing is atomic.
+        async with self.delivery_lock:
+            await self.deliver(url, fetched, parsed, started)
 
     async def deliver(self, url: str, fetched: Any, parsed: dict, started: datetime) -> None:
         pages = parsed["pages"]
+        if self.settings.max_pages:
+            remaining = max(0, self.settings.max_pages - self.pages_delivered)
+            if len(pages) > remaining:
+                parsed = {**parsed, "pages": pages[:remaining], "errorCode": "budget_exhausted"}
+                pages = parsed["pages"]
+                self.stopped = "budget_exhausted"
         mode = self.settings.output_mode
         base = {"url": url, "documentId": fetched.document_id}
         delivered = charged_pages = charged_ocr = 0
@@ -285,11 +304,29 @@ class Run:
             charged_pages, charged_ocr = await self.charge_pages(pages)
         else:
             text, ocr = _billable(pages)
-            # The charge follows the push, so the row carries the counts the charge will request.
+            # Dataset rows are immutable. Requested counts are not confirmed charges:
+            # link a receipt that is finalized only after content is saved and charged.
+            key = f"BILLING-{fetched.document_id}"
+            store = await self.actor.open_key_value_store()
+            receipt = {
+                "documentId": fetched.document_id,
+                "status": "pending",
+                "pagesChargeRequested": text,
+                "ocrPagesChargeRequested": ocr,
+                "pagesCharged": None,
+                "ocrPagesCharged": None,
+            }
+            await self.actor.set_value(key, receipt)
             row = self.document_row(
                 url, fetched, parsed, error_code=error_code, started=started,
-                pages_extracted=len(pages), pages_charged=text, ocr_charged=ocr,
+                pages_extracted=len(pages), pages_charged=None, ocr_charged=None,
             )  # fmt: skip
+            row.update(
+                pagesChargeRequested=text,
+                ocrPagesChargeRequested=ocr,
+                billingReceiptKey=key,
+                billingReceiptUrl=f"https://api.apify.com/v2/key-value-stores/{store.id}/records/{key}",
+            )
             row.update(self.document_body(parsed))
             if len(json.dumps(row)) > MAX_ITEM_BYTES:
                 row["markdown"] = None
@@ -300,6 +337,10 @@ class Run:
             try:
                 await self.actor.push_data(row)
             except ValueError:
+                await self.actor.set_value(
+                    key,
+                    {**receipt, "status": "not_charged", "pagesCharged": 0, "ocrPagesCharged": 0},
+                )
                 # The SDK refuses an item over its 9 MB limit before any request; `text` alone
                 # can exceed it. Deliver the free summary as an error row instead of crashing.
                 await self.push_document(
@@ -307,7 +348,22 @@ class Run:
                 )
                 return
             delivered = len(pages)
-            charged_pages, charged_ocr = await self.charge_pages(pages)
+            try:
+                charged_pages, charged_ocr = await self.charge_pages(pages)
+            except Exception:
+                # A transport failure can leave charge outcome unknown. Never report zero
+                # or retry billing here; the platform run's charge ledger is authoritative.
+                await self.actor.set_value(key, {**receipt, "status": "unknown"})
+                raise
+            await self.actor.set_value(
+                key,
+                {
+                    **receipt,
+                    "status": "confirmed",
+                    "pagesCharged": charged_pages,
+                    "ocrPagesCharged": charged_ocr,
+                },
+            )
         self.pages_delivered += delivered
         self.pages_charged += charged_pages
         self.ocr_charged += charged_ocr
@@ -339,10 +395,13 @@ class Run:
         (local `apify run`, FREE record) charged is 0, the limit is never reached and every
         row landed."""
         result = await self.actor.push_data(rows, charged_event_name=event)
-        charged = getattr(result, "charged_count", 0) or 0
+        charged = confirmed_charge_count(result)
         limit = bool(getattr(result, "event_charge_limit_reached", False))
-        landed = len(rows) if (charged == 0 and not limit) else min(charged, len(rows))
-        return landed, charged, limit
+        ppe = self.actor.get_charging_manager().get_pricing_info().is_pay_per_event
+        landed = len(rows) if (charged == 0 and not limit and not ppe) else min(charged, len(rows))
+        # A synthetic dataset charge may prevent a push while the explicit event alone
+        # still fits the remaining budget. Zero PPE rows must never count as delivered.
+        return landed, charged, limit or (ppe and landed < len(rows))
 
     async def charge_pages(self, pages: list[dict]) -> tuple[int, int]:
         """Document and chunk mode: rows are already pushed; charge by count, after the push."""
@@ -352,7 +411,7 @@ class Run:
             if count <= 0:
                 continue
             result = await self.actor.charge(event, count=count)
-            charged[event] = getattr(result, "charged_count", 0) or 0
+            charged[event] = confirmed_charge_count(result)
             if getattr(result, "event_charge_limit_reached", False):
                 self.stopped = "budget_exhausted"
         return charged[PAGE_EVENT], charged[OCR_EVENT]
@@ -397,8 +456,8 @@ class Run:
         error_code: str | None,
         started: datetime,
         pages_extracted: int = 0,
-        pages_charged: int = 0,
-        ocr_charged: int = 0,
+        pages_charged: int | None = 0,
+        ocr_charged: int | None = 0,
     ) -> dict:
         parsed = parsed or {}
         if error_code is None:

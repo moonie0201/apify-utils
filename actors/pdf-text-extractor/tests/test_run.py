@@ -168,7 +168,8 @@ async def test_ocr_off_image_pages_free_by_count(resolver, no_wait, work_dir, fi
     await run(actor, work_dir, fixtures, "image_only.pdf")
     assert actor.charge_calls == [("page", 1)] and actor.cm.charged == {"page": 1}
     doc = actor.rows("document")[0]
-    assert (doc["pagesExtracted"], doc["pagesCharged"], doc["imageOnlyPages"]) == (2, 1, 1)
+    billed = actor.values[doc["billingReceiptKey"]] if mode == "document" else doc
+    assert (doc["pagesExtracted"], billed["pagesCharged"], doc["imageOnlyPages"]) == (2, 1, 1)
 
 
 async def test_page_mode_budget_reached_at_group_end(
@@ -214,7 +215,8 @@ async def test_document_mode_charges_after_push(resolver, no_wait, work_dir, fix
     assert doc["markdown"] and len(doc["pages"]) == 3 and doc["pages"][0]["text"]
     assert doc["charCount"] == len(doc["text"]) and doc["tables"] is None
     assert actor.charge_calls == [("page", 3)] and actor.cm.charged == {"page": 3}
-    assert doc["pagesCharged"] == 3
+    assert doc["pagesCharged"] is None
+    assert actor.values[doc["billingReceiptKey"]]["pagesCharged"] == 3
 
 
 async def test_document_mode_item_too_large(resolver, no_wait, work_dir, fixtures, monkeypatch):

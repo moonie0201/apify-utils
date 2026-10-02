@@ -84,6 +84,7 @@ class Budget:
         self.charged = 0
         self.free = 0
         self.exhausted = False
+        self.changed = asyncio.Event()
 
     def reserve(self) -> bool:
         if self.exhausted or (self.cap is not None and self.reserved >= self.cap):
@@ -91,8 +92,19 @@ class Budget:
         self.reserved += 1
         return True
 
+    async def acquire(self) -> bool:
+        """Wait for in-flight outcomes before declaring the successful-video cap full."""
+        while True:
+            if self.reserve():
+                return True
+            if self.exhausted or (self.cap is not None and self.delivered >= self.cap):
+                return False
+            await self.changed.wait()
+            self.changed.clear()
+
     def release(self) -> None:
         self.reserved -= 1
+        self.changed.set()
 
     async def push_charged(self, row: dict[str, Any]) -> bool:
         """Push one `ok` row with the `video` event. Returns whether it landed."""
@@ -113,6 +125,7 @@ class Budget:
             self.release()
             return False
         self.delivered += 1
+        self.changed.set()
         self.charged += charged
         if limit:
             self.exhausted = True
@@ -252,7 +265,7 @@ class Run:
 
     async def worker(self, input_url: str, video_id: str) -> None:
         async with self.sem:
-            if not self.budget.reserve():
+            if not await self.budget.acquire():
                 await self.budget.push_free(make_row(input_url, video_id, "budget_exhausted"))
                 return
             try:

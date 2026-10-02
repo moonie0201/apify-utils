@@ -66,7 +66,20 @@ row for that document, and carries `status`, `errorCode`, `documentId`, `fileNam
 byte size, page counts, PDF metadata, `encrypted`, `permissionsCopyAllowed`, `durationMs` and
 `fetchedAt`. In `outputMode: document` the same row also carries `text`, `markdown`,
 `pages[{page, text, charCount, ocrApplied}]`, `tables`, `charCount` and `wordCount`, and is charged
-by page count after it has been pushed. A viewer page instead of a PDF comes back like this:
+by page count after it has been pushed.
+
+For successful document content rows, `pagesCharged` and `ocrPagesCharged` are **null**:
+the row is immutable and is saved before billing. `pagesChargeRequested` and
+`ocrPagesChargeRequested` describe the requested counts, not the bill. Fetch
+`billingReceiptUrl` after the run (or read `billingReceiptKey` from the default key-value
+store using the same account access). The receipt's `status: "confirmed"` contains the
+actual charged counts, including **0 on free runs** and smaller counts when a charge was
+partially allowed. `pending` or `unknown` means billing could not be confirmed, never zero;
+check the platform run's charge ledger. A receipt write/charge failure fails the run rather
+than reporting success, while any content already saved remains available. Page/chunk
+summary rows continue to report confirmed counts directly.
+
+A viewer page instead of a PDF comes back like this:
 
 ```json
 {
@@ -117,7 +130,7 @@ see Pricing.
 **$0.0003 per page, $0.003 per OCR page, no start fee.** Free, always: document summary rows,
 error rows, duplicate rows, pages outside `pageRange`, pages beyond `maxPagesPerPdf` or
 `maxPages`, image-only pages that were not OCRed (`ocr` off, `maxOcrPagesPerPdf` reached or
-Tesseract failed — delivered empty with `needsOcr: true`), and documents never reached because
+Tesseract failed or returned only whitespace — delivered with `needsOcr: true`), and documents never reached because
 the run stopped on budget or before its timeout.
 
 Worked examples, plain arithmetic:
@@ -182,9 +195,12 @@ the run to erase it. We do not log URLs or document text.
 ## For AI agents and MCP
 
 Use `outputMode: "document"` for one call → one item with the full text, or `"chunk"` to feed a
-vector store directly. `maxPages` and the run's maximum charge are honoured **before**
+vector store directly. Downloads and parsing retain two-document concurrency. Delivery and
+billing share a lock and recheck `maxPages`, so concurrent documents cannot exceed that cap.
+A document already being parsed may be shortened when another finishes first.
+`maxPages` and the run's maximum charge are checked **before**
 extraction, so an agent never pays for pages it cannot receive, and with `ocr` off there is a
-single price to reason about. Errors are typed rows, not exceptions.
+single price to reason about. PDF fetch and parse errors are typed rows. Billing or receipt-storage failures fail the run, as described above.
 
 ```json
 { "urls": ["https://www.irs.gov/pub/irs-pdf/fw9.pdf"], "outputMode": "document", "maxPages": 50 }

@@ -1,3 +1,4 @@
+import pytest
 from src.chunk import chunk_pages
 
 
@@ -75,3 +76,15 @@ def test_heading_stack_pops_by_level():
 
 def test_empty_pages_produce_no_chunks():
     assert chunk_pages(pages("", "   "), 1500, 200) == []
+
+
+@pytest.mark.parametrize("whitespace_char", ["\t", "\f", " "])
+def test_leading_whitespace_does_not_produce_empty_chunk(whitespace_char):
+    text = whitespace_char * 250 + "Invoice total 42"
+    out = chunk_pages(pages(text), 200, 0)
+    assert len(out) == 1
+    c = out[0]
+    assert c["text"] == "Invoice total 42"
+    assert (c["charStart"], c["charEnd"]) == (250, 266)
+    assert (c["pageStart"], c["pageEnd"]) == (1, 1)
+    assert (c["chunkIndex"], c["chunkCount"]) == (0, 1)

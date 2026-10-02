@@ -200,3 +200,5 @@ Open an issue on the Actor's Issues tab or at <https://github.com/moonie0201/api
 This Actor is unofficial. It is not affiliated with, endorsed by or sponsored by YouTube or Google LLC. It reads YouTube's public thumbnail CDN and public oEmbed endpoint, both of which YouTube may change or block access without notice; if that happens the run fails and charges nothing. All trademarks belong to their respective owners.
 
 You are responsible for how you use the images downstream; thumbnails remain the creators' works, and titles and channel names are the creators' and YouTube's content. Removal requests are honoured for future runs within 48 hours: [TAKEDOWN.md](https://github.com/moonie0201/apify-utils/blob/main/TAKEDOWN.md).
+
+When `maxVideos` slots are occupied by in-flight probes, later inputs wait for their outcomes. A missing video releases its slot so a later valid input can still be delivered; only successful deliveries consume the cap.

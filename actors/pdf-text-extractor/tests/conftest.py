@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import math
 import os
 import socket
@@ -81,6 +82,9 @@ class FakeChargingManager:
         self.max_total = max_total
         self.charged: dict[str, int] = {}
 
+    def get_pricing_info(self):
+        return SimpleNamespace(is_pay_per_event=bool(self.prices))
+
     def total(self) -> float:
         return sum(self.prices.get(e, 0) * n for e, n in self.charged.items())
 
@@ -120,9 +124,16 @@ class FakeActor:
         self.cm = FakeChargingManager(prices, max_total)
         self.configuration = SimpleNamespace(timeout_at=timeout_at, memory_mbytes=memory)
         self.dataset: list[dict] = []
+        self.values = {}
         self.charge_calls: list[tuple[str, int]] = []
         self.status: str | None = None
         self.failed: dict | None = None
+
+    async def open_key_value_store(self):
+        return SimpleNamespace(id="test-store")
+
+    async def set_value(self, key, value):
+        self.values[key] = copy.deepcopy(value)
 
     async def get_input(self):
         return self.input

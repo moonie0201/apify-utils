@@ -325,7 +325,7 @@
           "null"
         ],
         "title": "Pages charged",
-        "description": "page events charged for this document (page and chunk mode: what was actually charged; document mode: the count requested by the charge that follows the push). 0 on free runs.",
+        "description": "Confirmed page events in page/chunk summaries. In document content rows this is null (not yet confirmed); read billingReceiptUrl after the run. A confirmed receipt may contain 0 for a free run.",
         "example": 6
       },
       "ocrPagesCharged": {
@@ -334,7 +334,7 @@
           "null"
         ],
         "title": "OCR pages charged",
-        "description": "ocr-page events charged for this document.",
+        "description": "Confirmed OCR events in page/chunk summaries; null in document content rows until the linked receipt confirms actual billing.",
         "example": 0
       },
       "imageOnlyPages": {
@@ -416,6 +416,42 @@
         "title": "Fetched at",
         "description": "UTC time the document was fetched (document rows only; charged rows carry no timestamp).",
         "example": "2026-08-28T09:00:00Z"
+      },
+      "pagesChargeRequested": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Requested page events",
+        "description": "Text-page events requested after document content is saved; not an invoice.",
+        "example": 3
+      },
+      "ocrPagesChargeRequested": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "title": "Requested OCR events",
+        "description": "OCR-page events requested after document content is saved; not an invoice.",
+        "example": 0
+      },
+      "billingReceiptKey": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Billing receipt key",
+        "description": "Document-mode receipt in the default key-value store. Its confirmed counts, not requested counts, describe the bill.",
+        "example": "BILLING-3f2a9c1d7b8e4f60"
+      },
+      "billingReceiptUrl": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Billing receipt",
+        "description": "Fetch after the run with the same account access. Status confirmed gives actual counts; pending or unknown is not zero. Check the platform run ledger if finalization failed.",
+        "example": "https://api.apify.com/v2/key-value-stores/STORE_ID/records/BILLING-3f2a9c1d7b8e4f60"
       }
     }
   },
