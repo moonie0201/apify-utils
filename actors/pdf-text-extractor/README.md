@@ -1,5 +1,7 @@
 # PDF Text & Table Extractor — Markdown, OCR
 
+> Source release, 2026-10-02: this repository includes tested improvements that are not yet in the Apify Store Actor. The Store still runs build **0.1.1**. Cloud build and runtime verification are pending; the behavior described below applies to this source revision.
+
 > **Unofficial tool.** Not affiliated with, endorsed by or sponsored by Google (PDFium) or the
 > maintainers of Tesseract. Built with PDFium (BSD-3) and Tesseract (Apache-2.0); all trademarks
 > belong to their owners. **Removal requests:**

@@ -1,5 +1,7 @@
 # YouTube Thumbnail Downloader — All Sizes + WebP
 
+> Source release, 2026-10-02: this repository includes tested improvements that are not yet in the Apify Store Actor. The Store still runs build **0.1.1**. Cloud build and runtime verification are pending; the behavior described below applies to this source revision.
+
 > **Unofficial.** Not affiliated with, endorsed by or sponsored by YouTube or Google LLC.
 > This Actor reads YouTube's public thumbnail CDN and public oEmbed endpoint.
 > YouTube may change or block access without notice — if that happens the run fails and charges nothing.
